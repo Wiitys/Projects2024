@@ -1,6 +1,10 @@
 class Piece:
+    """
+        Classe Piece
+        Possède toutes les fonctionnalités d'une pièce d'un jeu de dame(ses mouvements, sa couleur, son statut)
+    """
 
-    def __init__(self,isQueen=False, color, position):
+    def __init__(self, color, position, isQueen=False):
         self.isQueen = isQueen
         self.color = color
         self.position = position
@@ -14,7 +18,6 @@ class Piece:
                 board : matrice du plateau actuel
         :return: boolean disant si oui ou non il est possible d'aller à end
         """
-        end=(5,5)
         x_begin, y_begin = self.position
         x_end, y_end = end
 
@@ -23,7 +26,7 @@ class Piece:
             return False
 
         # Vérifier que la case d'arrivée est vide
-        if board.get_piece(end) is not 0:
+        if board.get_piece(end) != 0:
             return False
 
         # Calculer la différence de lignes et de colonnes
@@ -47,10 +50,8 @@ class Piece:
     def promote(self):
         """
         Transforme un pion en dame
-        :return: boolean
         """
-        isQueen = True
-        return isQueen
+        self.isQueen = True
 
 
 
