@@ -2,20 +2,20 @@ import pygame
 
 pygame.init()
 
-WIDTH, HEIGHT = 1080,720
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+m_width, m_height = 1080,720
+WIN = pygame.display.set_mode((m_width, m_height))
 pygame.display.set_caption("Jeu de Dames")
 
 def main():
 
-    clock = pygame.time.Clock()
-    run = True
+    v_clock = pygame.time.Clock()
+    v_run = True
 
-    while run:
-        clock.tick(60)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
+    while v_run:
+        v_clock.tick(60)
+        for v_event in pygame.event.get():
+            if v_event.type == pygame.QUIT:
+                v_run = False
 
         pygame.display.update()
 
