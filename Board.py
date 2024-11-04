@@ -13,8 +13,9 @@ class Board:
         """
         Fonction permettant à l'appel d'initialiser le plateau de jeu ainsi que la présence des pions
         """
+
         # Initialisation de la grille avec des 1 pour signier la présence des pions
-        self.grid = [[1 for _ in range(10)] for _ in range(10)]
+        self.grid = [[1 if (i + j) % 2 == 0 else -1 for j in range(10)] for i in range(10)]
 
         # Modification des deux lignes du milieu pour les remplir de 0 car il n'y a pas de pions ici
         for i in range(4, 6):
@@ -32,7 +33,7 @@ class Board:
             self.grid[end[0]][end[1]] = 1
 
     def is_valid_move(self,start,end):
-        if(self.grid[end[0]][end[1]] == 0 and (start[0] - end[0]) <= 1 and (start[1] - end[1]) <= 1):
+        if(self.grid[end[0]][end[1]] == 0 and self.grid[start[0]][start[1]] == 1 and (start[0] - end[0]) <= 1 and (start[1] - end[1]) <= 1 ):
             return True
         else :
             return False
@@ -42,7 +43,7 @@ def test():
     board.initialize_board()
     for row in board.grid:
         print(row)
-    board.move_piece((4,4),(4,5))
+    board.move_piece((3,3),(4,5))
     print("\n")
     for row in board.grid:
         print(row)
