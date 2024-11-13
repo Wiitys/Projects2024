@@ -12,8 +12,8 @@ class Board:
         """
         Fonction permettant d'initialiser le plateau de jeu avec les pions.
         """
-        # Initialisation de la grille avec des 1 pour signaler la présence des pions
-        self.grid = [["W" if (i + j) % 2 == 0 and i<5 else "B" if (i + j) % 2 == 0 and i>5  else 0 for j in range(10)] for i in range(10)]
+        # Initialisation de la grille avec "W" pour blanc, "B" pour noir et 0 pour vide
+        self.grid = [["W" if (i + j) % 2 == 0 and i < 5 else "B" if (i + j) % 2 == 0 and i > 5 else 0 for j in range(10)] for i in range(10)]
 
         # Modification des deux lignes du milieu pour les remplir de 0 car il n'y a pas de pions ici
         for i in range(4, 6):
@@ -35,23 +35,28 @@ class Board:
         :return: Boolean -> si la pièce est déplaçable ou non
         """
         if self.is_valid_move(start, end):
+            piece = self.grid[start[0]][start[1]]  # Stocke le type de pièce ("W" ou "B")
+
             # Vérifie s'il y a une pièce intermédiaire pour un mouvement de saut
             if abs(start[0] - end[0]) == 2 and abs(start[1] - end[1]) == 2:
                 intermediate = self.get_intermediate_position(start, end)
 
                 # Si une pièce ennemie se trouve à la position intermédiaire, elle est mangée
-                if self.grid[intermediate[0]][intermediate[1]] == 1:
+                if self.grid[intermediate[0]][intermediate[1]] in ("W", "B"):
                     self.grid[intermediate[0]][intermediate[1]] = 0  # Retire la pièce mangée
 
             # Effectue le mouvement
-            self.grid[start[0]][start[1]] = 0
-            self.grid[end[0]][end[1]] = 1
+            self.grid[start[0]][start[1]] = 0  # Vide la position de départ
+            self.grid[end[0]][end[1]] = piece  # Place la pièce dans la position d'arrivée
+            return True
+        return False
 
     def is_valid_move(self, start, end):
         """
         Vérifie si un mouvement est valide. Un mouvement de deux cases est valide si une pièce peut être mangée.
         """
-        if self.grid[end[0]][end[1]] != 0 or self.grid[start[0]][start[1]] != 1:
+        # Vérifie que la case de départ contient une pièce ("W" ou "B") et que la case d'arrivée est vide (0)
+        if self.grid[end[0]][end[1]] != 0 or self.grid[start[0]][start[1]] not in ("W", "B"):
             return False
 
         row_diff = abs(start[0] - end[0])
@@ -63,24 +68,9 @@ class Board:
         # Mouvement de deux cases avec une pièce intermédiaire pour capturer
         elif row_diff == 2 and col_diff == 2:
             intermediate = self.get_intermediate_position(start, end)
-            return self.grid[intermediate[0]][intermediate[1]] == 1  # Capture uniquement s'il y a une pièce
+            # Capture uniquement si la case intermédiaire contient une pièce adverse
+            return self.grid[intermediate[0]][intermediate[1]] in ("W", "B")
         return False
 
 
-def test():
-    board = Board()
-    board.initialize_board()
 
-    print("Plateau initial :")
-    for row in board.grid:
-        print(row)
-
-    # Exemple de mouvement de capture
-    board.move_piece((2, 2), (4, 4))  # Ce mouvement doit capturer la pièce en (3, 3)
-
-    print("\nPlateau après capture :")
-    for row in board.grid:
-        print(row)
-
-
-test()

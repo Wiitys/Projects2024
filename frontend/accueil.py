@@ -1,6 +1,5 @@
 ﻿import tkinter as tk
 import customtkinter as ctk
-
 from backend.attributs_de_jeu.Board import Board
 
 # Configuration de base pour customtkinter
@@ -29,7 +28,6 @@ class InterfaceJeuDeDames:
 
         # Affichage du plateau de jeu avec des cases et des pions
         self.afficher_plateau()
-        self.afficher_pieces()
 
         # Création du bouton "JOUER"
         self.bouton_jouer = ctk.CTkButton(
@@ -64,7 +62,7 @@ class InterfaceJeuDeDames:
                 if self.board.grid[i][j] == "B":
                     couleur_pion = "#000000"
                 elif self.board.grid[i][j] == "W":
-                    couleur_pion = "#FFFFFF"
+                    couleur_pion = "#FF0000"
 
                 if couleur_pion:
                     x1, y1 = j * taille_case + 10, i * taille_case + 10
@@ -78,7 +76,7 @@ class InterfaceJeuDeDames:
         """Démarre le drag d'un pion."""
         # Enregistre l'ID du pion sélectionné et la position initiale
         self.pion_selectionne = event.widget.find_withtag("current")[0]
-        self.position_initiale = (event.x // 60, event.y // 60)
+        self.position_initiale = (event.y // 60, event.x // 60)
 
     def drag(self, event):
         """Déplace le pion sélectionné avec la souris."""
@@ -91,11 +89,15 @@ class InterfaceJeuDeDames:
         """Dépose le pion et tente de le déplacer sur le plateau."""
         if self.pion_selectionne and self.position_initiale:
             # Position finale du pion
-            position_finale = (event.x // 60, event.y // 60)
+            position_finale = (event.y // 60, event.x // 60)
 
             # Appelle `move_piece` pour mettre à jour la logique du plateau
             if self.board.move_piece(self.position_initiale, position_finale):
                 print(f"Pion déplacé de {self.position_initiale} à {position_finale}")
+                # Met à jour la position sur le canevas pour la position finale
+                x1, y1 = position_finale[1] * 60 + 10, position_finale[0] * 60 + 10
+                x2, y2 = x1 + 40, y1 + 40
+                self.canvas.coords(self.pion_selectionne, x1, y1, x2, y2)
             else:
                 print(f"Déplacement invalide de {self.position_initiale} à {position_finale}")
                 # Retour à la position initiale si mouvement invalide
@@ -111,6 +113,7 @@ class InterfaceJeuDeDames:
         """Action pour démarrer le jeu."""
         print("Le jeu commence !")
         self.afficher_pieces()
+        self.bouton_jouer.pack_forget()
 
 
 # Initialisation du plateau avec des pions
