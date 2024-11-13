@@ -1,6 +1,6 @@
 ﻿import tkinter as tk
 import customtkinter as ctk
-from backend.attributs_de_jeu.Board import Board
+from Projects2024.backend.attributs_de_jeu.Board import Board
 
 # Configuration de base pour customtkinter
 ctk.set_appearance_mode("dark")
@@ -13,6 +13,7 @@ class InterfaceJeuDeDames:
         self.board = board
         self.fenetre.title("Jeu de Dames")
         self.fenetre.geometry("650x750")
+        self.board.current_turn = 'W'
 
         # Titre principal
         self.titre = ctk.CTkLabel(fenetre, text="Jeu de Dames", font=("Helvetica", 30, "bold"), text_color="#FFD700")
@@ -40,6 +41,10 @@ class InterfaceJeuDeDames:
         # Variables pour le drag and drop
         self.pion_selectionne = None
         self.position_initiale = None
+
+        # Affichage du tour du joueur
+        self.tour_label = ctk.CTkLabel(fenetre, text="Au tour de : Blanc", font=("Helvetica", 20), text_color="#FFD700")
+        self.tour_label.pack(pady=20)
 
     def afficher_plateau(self):
         """Affiche le plateau de jeu en dessinant les cases pour une grille 10x10."""
@@ -98,6 +103,15 @@ class InterfaceJeuDeDames:
                 x1, y1 = position_finale[1] * 60 + 10, position_finale[0] * 60 + 10
                 x2, y2 = x1 + 40, y1 + 40
                 self.canvas.coords(self.pion_selectionne, x1, y1, x2, y2)
+
+                if self.board.current_turn == 'B':
+                    self.board.current_turn = 'W'
+                else :
+                    self.board.current_turn = 'B'
+
+                # Mettre à jour le tour du joueur
+                self.mettre_a_jour_tour()
+
             else:
                 print(f"Déplacement invalide de {self.position_initiale} à {position_finale}")
                 # Retour à la position initiale si mouvement invalide
@@ -108,6 +122,13 @@ class InterfaceJeuDeDames:
             # Réinitialise les variables
             self.pion_selectionne = None
             self.position_initiale = None
+
+    def mettre_a_jour_tour(self):
+        """Met à jour le texte affichant le tour du joueur."""
+        if self.board.current_turn == "B":
+            self.tour_label.configure(text="Au tour de : Noir")
+        else:
+            self.tour_label.configure(text="Au tour de : Blanc")
 
     def lancer_jeu(self):
         """Action pour démarrer le jeu."""
