@@ -1,5 +1,11 @@
 ﻿import tkinter as tk
 import customtkinter as ctk
+import sys
+import os
+
+# Ajouter dynamiquement le chemin racine du projet
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 from Projects2024.backend.attributs_de_jeu.Board import Board
 
 # Configuration de base pour customtkinter
