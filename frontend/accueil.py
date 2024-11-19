@@ -7,6 +7,8 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 from Projects2024.backend.attributs_de_jeu.Board import Board
+from Projects2024.backend.attributs_de_jeu.Piece import Piece
+
 
 # Configuration de base pour customtkinter
 ctk.set_appearance_mode("dark")
@@ -20,6 +22,7 @@ class InterfaceJeuDeDames:
         self.fenetre.title("Jeu de Dames")
         self.fenetre.geometry("650x750")
         self.board.current_turn = 'W'
+        self.pions ={}
 
         # Titre principal
         self.titre = ctk.CTkLabel(fenetre, text="Jeu de Dames", font=("Helvetica", 30, "bold"), text_color="#FFD700")
@@ -72,13 +75,17 @@ class InterfaceJeuDeDames:
                 couleur_pion = None
                 if self.board.grid[i][j] == "B":
                     couleur_pion = "#000000"
+                    piece = Piece("B",(i,j))
                 elif self.board.grid[i][j] == "W":
                     couleur_pion = "#FF0000"
+                    piece = Piece("W",(i,j))
+
 
                 if couleur_pion:
                     x1, y1 = j * taille_case + 10, i * taille_case + 10
                     x2, y2 = (j + 1) * taille_case - 10, (i + 1) * taille_case - 10
                     pion_id = self.canvas.create_oval(x1, y1, x2, y2, fill=couleur_pion, outline="")
+                    self.pions[pion_id] = piece
                     self.canvas.tag_bind(pion_id, "<ButtonPress-1>", self.start_drag)
                     self.canvas.tag_bind(pion_id, "<B1-Motion>", self.drag)
                     self.canvas.tag_bind(pion_id, "<ButtonRelease-1>", self.drop)
@@ -89,9 +96,10 @@ class InterfaceJeuDeDames:
         self.pion_selectionne = event.widget.find_withtag("current")[0]
         self.position_initiale = (event.y // 60, event.x // 60)
 
+
     def drag(self, event):
         """Déplace le pion sélectionné avec la souris."""
-        if self.pion_selectionne:
+        if self.pion_selectionne :
             # Calcule les nouvelles coordonnées du pion
             x, y = event.x, event.y
             self.canvas.coords(self.pion_selectionne, x - 25, y - 25, x + 25, y + 25)
@@ -103,7 +111,7 @@ class InterfaceJeuDeDames:
             position_finale = (event.y // 60, event.x // 60)
 
             # Appelle `move_piece` pour mettre à jour la logique du plateau
-            if self.board.move_piece(self.position_initiale, position_finale):
+            if self.board.move_piece(self.position_initiale, position_finale, self.pions[self.pion_selectionne].color):
                 print(f"Pion déplacé de {self.position_initiale} à {position_finale}")
                 # Met à jour la position sur le canevas pour la position finale
                 x1, y1 = position_finale[1] * 60 + 10, position_finale[0] * 60 + 10
@@ -119,7 +127,11 @@ class InterfaceJeuDeDames:
                 self.mettre_a_jour_tour()
 
             else:
-                print(f"Déplacement invalide de {self.position_initiale} à {position_finale}")
+                if(self.pions[self.pion_selectionne].color != self.board.current_turn):
+                    print(f"Déplacement invalide de {self.position_initiale} à {position_finale}, ce n'est pas votre tour")
+                else:
+                    print(f"Déplacement invalide de {self.position_initiale} à {position_finale}")
+
                 # Retour à la position initiale si mouvement invalide
                 x1, y1 = self.position_initiale[1] * 60 + 10, self.position_initiale[0] * 60 + 10
                 x2, y2 = x1 + 40, y1 + 40
