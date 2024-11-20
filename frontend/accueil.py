@@ -142,12 +142,12 @@ class InterfaceJeuDeDames:
         for i in range(10):
             for j in range(10):
                 couleur_pion = None
-                if self.board.grid[i][j] == "B":
+                if self.board.grid[i][j] in ["BQ", "B"]:
                     couleur_pion = "#000000"
-                    piece = Piece("B",(i,j))
-                elif self.board.grid[i][j] == "W":
+                    piece = Piece(self.board.grid[i][j],(i,j))
+                elif self.board.grid[i][j] in ["W", "WQ"]:
                     couleur_pion = "#FF0000"
-                    piece = Piece("W",(i,j))
+                    piece = Piece(self.board.grid[i][j],(i,j))
 
 
                 if couleur_pion:

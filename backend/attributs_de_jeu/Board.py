@@ -89,6 +89,8 @@ class Board:
                 return False
             if color_piece == "B" and row_diff >= 0:  # Noirs doivent avancer vers le haut
                 return False
+            elif color_piece in ("WQ","BQ"):
+                return True
             return True
 
         # Vérifie un mouvement de capture (deux cases)
