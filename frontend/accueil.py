@@ -23,6 +23,7 @@ class InterfaceJeuDeDames:
         self.fenetre.geometry("650x750")
         self.board.current_turn = 'W'
         self.pions ={}
+        self.partie_terminee = False
 
         # Titre principal
         self.titre = ctk.CTkLabel(fenetre, text="Jeu de Dames", font=("Helvetica", 30, "bold"), text_color="#FFD700")
@@ -72,13 +73,66 @@ class InterfaceJeuDeDames:
                 couleur = "#FFFFFF" if (i + j) % 2 == 0 else "#333333"
                 self.canvas.create_rectangle(x1, y1, x2, y2, fill=couleur, outline="")
 
-
     def mettre_a_jour_pions_restants(self):
-        """Met à jour l'affichage du nombre de pions restants pour chaque joueur."""
+        """Met à jour l'affichage du nombre de pions restants pour chaque joueur et vérifie si un joueur a gagné."""
         nombre_blancs = sum(1 for i in range(10) for j in range(10) if self.board.grid[i][j] == "W")
         nombre_noirs = sum(1 for i in range(10) for j in range(10) if self.board.grid[i][j] == "B")
         self.pions_restants_label.configure(text=f"Pions restants - Blanc: {nombre_blancs} | Noir: {nombre_noirs}")
 
+        # Vérification de la condition de victoire, seulement si la partie n'est pas terminée
+        if not self.partie_terminee and (nombre_blancs == 0 or nombre_noirs == 0):
+            self.partie_terminee = True  # Marquer la partie comme terminée
+            gagnant = "Noir" if nombre_noirs > 0 else "Rouge"
+            couleur_popup = "#000000" if gagnant == "Noir" else "#FF0000"
+            self.afficher_popup_victoire(gagnant, couleur_popup)
+
+
+    def afficher_popup_victoire(self, gagnant, couleur_popup):
+        """Affiche un popup annonçant le gagnant et réinitialise le jeu à la fermeture."""
+        popup = tk.Toplevel(self.fenetre)
+        popup.title("Partie terminée")
+        popup.geometry("300x150")
+        popup.configure(bg="#333333")
+        popup.transient(self.fenetre)
+        popup.grab_set()
+
+        label_message = tk.Label(
+            popup,
+            text=f"Le joueur {gagnant} a gagné !",
+            font=("Helvetica", 16, "bold"),
+            fg=couleur_popup,
+            bg="#333333"
+        )
+        label_message.pack(pady=30)
+
+        bouton_ok = ctk.CTkButton(
+            popup,
+            text="OK",
+            command=lambda: [popup.destroy(), self.reinitialiser_jeu()],
+            font=("Helvetica", 14),
+            fg_color="#FF5733",
+            hover_color="#C70039"
+        )
+        bouton_ok.pack(pady=10)
+
+    def reinitialiser_jeu(self):
+        """Réinitialise le jeu à son état initial."""
+        # Réinitialise le plateau
+        self.board.initialize_board()
+
+        # Réinitialise les variables internes
+        self.board.current_turn = 'W'
+        self.partie_terminee = False
+
+        # Réinitialise l'affichage
+        self.canvas.delete("all")  # Efface tout sur le canevas
+        self.afficher_plateau()  # Redessine le plateau
+        self.rafraichir_pieces()  # Réaffiche les pièces
+        self.mettre_a_jour_pions_restants()
+        self.mettre_a_jour_tour()
+
+        # Réaffiche le bouton "JOUER" pour permettre de relancer la partie
+        self.bouton_jouer.pack(pady=40)
 
     def afficher_pieces(self):
         """Affiche les pions noirs et blancs selon les positions du board pour une grille 10x10."""
