@@ -113,6 +113,15 @@ class InterfaceJeuDeDames:
         self.pion_selectionne = event.widget.find_withtag("current")[0]
         self.position_initiale = (event.y // 60, event.x // 60)
 
+    def rafraichir_pieces(self):
+        """Efface et réaffiche toutes les pièces sur le canevas en fonction de l'état du plateau."""
+        # Supprime tous les pions actuels du canevas
+        for pion_id in list(self.pions.keys()):
+            self.canvas.delete(pion_id)
+        self.pions.clear()
+
+        # Réaffiche toutes les pièces
+        self.afficher_pieces()
 
     def drag(self, event):
         """Déplace le pion sélectionné avec la souris."""
@@ -128,27 +137,35 @@ class InterfaceJeuDeDames:
             position_finale = (event.y // 60, event.x // 60)
 
             # Appelle `move_piece` pour mettre à jour la logique du plateau
-            if self.board.move_piece(self.position_initiale, position_finale, self.pions[self.pion_selectionne]):
+            mouvement_valide, piece_mangee = self.board.move_piece(
+                self.position_initiale, position_finale, self.pions[self.pion_selectionne].color
+            )
 
+            if mouvement_valide:
                 print(f"Pion déplacé de {self.position_initiale} à {position_finale}")
+
+                if piece_mangee:
+                    print(f"Une pièce a été mangée en se déplaçant de {self.position_initiale} à {position_finale}")
+                    self.rafraichir_pieces()
+
                 # Met à jour la position sur le canevas pour la position finale
                 x1, y1 = position_finale[1] * 60 + 10, position_finale[0] * 60 + 10
                 x2, y2 = x1 + 40, y1 + 40
                 self.canvas.coords(self.pion_selectionne, x1, y1, x2, y2)
 
-
-                if self.board.current_turn == 'B':
-                    self.board.current_turn = 'W'
-                else :
-                    self.board.current_turn = 'B'
+                # Alterne le tour des joueurs si aucun mouvement supplémentaire n'est possible
+                if not piece_mangee:  # Passe le tour seulement si aucune capture supplémentaire n'est possible
+                    self.board.current_turn = 'W' if self.board.current_turn == 'B' else 'B'
 
                 # Mettre à jour le tour du joueur
 
                 self.mettre_a_jour_tour()
+                print(self.board.grid)
 
             else:
-                if(self.pions[self.pion_selectionne].color != self.board.current_turn):
-                    print(f"Déplacement invalide de {self.position_initiale} à {position_finale}, ce n'est pas votre tour")
+                if self.pions[self.pion_selectionne].color != self.board.current_turn:
+                    print(
+                        f"Déplacement invalide de {self.position_initiale} à {position_finale}, ce n'est pas votre tour")
                 else:
                     print(f"Déplacement invalide de {self.position_initiale} à {position_finale}")
 
@@ -179,7 +196,7 @@ class InterfaceJeuDeDames:
 # Initialisation du plateau avec des pions
 board = Board()
 board.initialize_board()
-print(board.get_grid())
+
 
 # Création de la fenêtre principale
 fenetre = ctk.CTk()
