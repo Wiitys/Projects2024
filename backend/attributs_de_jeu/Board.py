@@ -57,7 +57,8 @@ class Board:
 
                     self.grid[end[0]][end[1]] = 'WQ'
 
-                elif self.grid[end[0]][end[1]] == 'B':
+            if end[0] == 0:
+                if self.grid[end[0]][end[1]] == 'B':
                     self.grid[end[0]][end[1]] = 'BQ'
 
             print(self.grid)
