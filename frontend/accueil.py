@@ -128,7 +128,7 @@ class InterfaceJeuDeDames:
             position_finale = (event.y // 60, event.x // 60)
 
             # Appelle `move_piece` pour mettre à jour la logique du plateau
-            if self.board.move_piece(self.position_initiale, position_finale, self.pions[self.pion_selectionne].color):
+            if self.board.move_piece(self.position_initiale, position_finale, self.pions[self.pion_selectionne]):
 
                 print(f"Pion déplacé de {self.position_initiale} à {position_finale}")
                 # Met à jour la position sur le canevas pour la position finale
@@ -175,9 +175,11 @@ class InterfaceJeuDeDames:
         self.bouton_jouer.pack_forget()
 
 
+
 # Initialisation du plateau avec des pions
 board = Board()
 board.initialize_board()
+print(board.get_grid())
 
 # Création de la fenêtre principale
 fenetre = ctk.CTk()

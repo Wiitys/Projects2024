@@ -27,14 +27,14 @@ class Board:
         mid_col = (start[1] + end[1]) // 2
         return mid_row, mid_col
 
-    def move_piece(self, start, end, color_piece):
+    def move_piece(self, start, end, piece):
         """
         Vérifie si la pièce est déplaçable et la déplace si possible. Mange une pièce si elle est sur le chemin.
         :param start: position de base de la pièce
         :param end: position future de la pièce
         :return: Boolean -> si la pièce est déplaçable ou non
         """
-        if self.is_valid_move(start, end, color_piece):
+        if self.is_valid_move(start, end, piece):
             piece = self.grid[start[0]][start[1]]  # Stocke le type de pièce ("W" ou "B")
 
             # Vérifie s'il y a une pièce intermédiaire pour un mouvement de saut
@@ -46,20 +46,32 @@ class Board:
                     self.grid[intermediate[0]][intermediate[1]] = 0  # Retire la pièce mangée
 
 
+
             # Effectue le mouvement
             self.grid[start[0]][start[1]] = 0  # Vide la position de départ
             self.grid[end[0]][end[1]] = piece  # Place la pièce dans la position d'arrivée
+            # Si la ligne sur laquelle je veux aller est la 10 eme alors je vais devenir une reine
+            if end[0] == 9:
+                #Le pion blanc devient WQ (WHITE QUEEN) et le noir BQ (black queen)
+                if self.grid[end[0]][end[1]] == "W":
+
+                    self.grid[end[0]][end[1]] = 'WQ'
+
+                elif self.grid[end[0]][end[1]] == 'B':
+                    self.grid[end[0]][end[1]] = 'BQ'
+
+            print(self.grid)
             return True
 
         return False
 
 
-    def is_valid_move(self, start, end, color_piece):
+    def is_valid_move(self, start, end, piece):
         """
         Vérifie si un mouvement est valide. Un mouvement de deux cases est valide si une pièce peut être mangée.
         """
         # Vérifie que la case de départ contient une pièce ("W" ou "B") et que la case d'arrivée est vide (0)
-        if color_piece != self.current_turn :
+        if piece.color != self.current_turn :
             return False
         if self.grid[end[0]][end[1]] != 0 or self.grid[start[0]][start[1]] not in ("W", "B"):
             return False
