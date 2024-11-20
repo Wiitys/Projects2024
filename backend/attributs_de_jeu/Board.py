@@ -50,14 +50,16 @@ class Board:
             # Effectue le mouvement
             self.grid[start[0]][start[1]] = 0  # Vide la position de départ
             self.grid[end[0]][end[1]] = piece  # Place la pièce dans la position d'arrivée
+
             # Si la ligne sur laquelle je veux aller est la 10 eme alors je vais devenir une reine
             if end[0] == 9:
-                #Le pion blanc devient WQ (WHITE QUEEN) et le noir BQ (black queen)
+                #Le pion blanc devient WQ (WHITE QUEEN)
                 if self.grid[end[0]][end[1]] == "W":
-
                     self.grid[end[0]][end[1]] = 'WQ'
 
+            # Si la ligne sur laquelle je veux aller est la 10 eme (0eme pour les noirs)  alors je vais devenir une reine
             if end[0] == 0:
+                #Le pion noir devient Black queen
                 if self.grid[end[0]][end[1]] == 'B':
                     self.grid[end[0]][end[1]] = 'BQ'
 
