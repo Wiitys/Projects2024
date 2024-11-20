@@ -45,11 +45,14 @@ class Board:
                 if self.grid[intermediate[0]][intermediate[1]] in ("W", "B"):
                     self.grid[intermediate[0]][intermediate[1]] = 0  # Retire la pièce mangée
 
+
             # Effectue le mouvement
             self.grid[start[0]][start[1]] = 0  # Vide la position de départ
             self.grid[end[0]][end[1]] = piece  # Place la pièce dans la position d'arrivée
             return True
+
         return False
+
 
     def is_valid_move(self, start, end, color_piece):
         """
@@ -74,5 +77,8 @@ class Board:
             return self.grid[intermediate[0]][intermediate[1]] in ("W", "B")
         return False
 
+
+    def get_grid(self):
+        return self.grid
 
 

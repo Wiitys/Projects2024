@@ -52,8 +52,15 @@ class InterfaceJeuDeDames:
         self.position_initiale = None
 
         # Affichage du tour du joueur
-        self.tour_label = ctk.CTkLabel(fenetre, text="Au tour de : Blanc", font=("Helvetica", 20), text_color="#FFD700")
+        self.tour_label = ctk.CTkLabel(fenetre, text="Au tour de : Rouge", font=("Helvetica", 20), text_color="#FFD700")
         self.tour_label.pack(pady=20)
+
+        # Affichage du nombre de pions restants
+        self.pions_restants_label = ctk.CTkLabel(
+            fenetre, text="Pions restants - Blanc: 20 | Noir: 20",
+            font=("Helvetica", 18), text_color="#FFFFFF"
+        )
+        self.pions_restants_label.pack(pady=10)
 
     def afficher_plateau(self):
         """Affiche le plateau de jeu en dessinant les cases pour une grille 10x10."""
@@ -64,6 +71,14 @@ class InterfaceJeuDeDames:
                 x2, y2 = x1 + taille_case, y1 + taille_case
                 couleur = "#FFFFFF" if (i + j) % 2 == 0 else "#333333"
                 self.canvas.create_rectangle(x1, y1, x2, y2, fill=couleur, outline="")
+
+
+    def mettre_a_jour_pions_restants(self):
+        """Met à jour l'affichage du nombre de pions restants pour chaque joueur."""
+        nombre_blancs = sum(1 for i in range(10) for j in range(10) if self.board.grid[i][j] == "W")
+        nombre_noirs = sum(1 for i in range(10) for j in range(10) if self.board.grid[i][j] == "B")
+        self.pions_restants_label.configure(text=f"Pions restants - Blanc: {nombre_blancs} | Noir: {nombre_noirs}")
+
 
     def afficher_pieces(self):
         """Affiche les pions noirs et blancs selon les positions du board pour une grille 10x10."""
@@ -89,6 +104,8 @@ class InterfaceJeuDeDames:
                     self.canvas.tag_bind(pion_id, "<ButtonPress-1>", self.start_drag)
                     self.canvas.tag_bind(pion_id, "<B1-Motion>", self.drag)
                     self.canvas.tag_bind(pion_id, "<ButtonRelease-1>", self.drop)
+                # Mettre à jour les pions restants après affichage initial
+            self.mettre_a_jour_pions_restants()
 
     def start_drag(self, event):
         """Démarre le drag d'un pion."""
@@ -112,11 +129,13 @@ class InterfaceJeuDeDames:
 
             # Appelle `move_piece` pour mettre à jour la logique du plateau
             if self.board.move_piece(self.position_initiale, position_finale, self.pions[self.pion_selectionne].color):
+
                 print(f"Pion déplacé de {self.position_initiale} à {position_finale}")
                 # Met à jour la position sur le canevas pour la position finale
                 x1, y1 = position_finale[1] * 60 + 10, position_finale[0] * 60 + 10
                 x2, y2 = x1 + 40, y1 + 40
                 self.canvas.coords(self.pion_selectionne, x1, y1, x2, y2)
+
 
                 if self.board.current_turn == 'B':
                     self.board.current_turn = 'W'
@@ -124,6 +143,7 @@ class InterfaceJeuDeDames:
                     self.board.current_turn = 'B'
 
                 # Mettre à jour le tour du joueur
+
                 self.mettre_a_jour_tour()
 
             else:
