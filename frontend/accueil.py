@@ -246,9 +246,11 @@ class InterfaceJeuDeDames:
         self.bouton_jouer.pack_forget()
 
 
+
 # Initialisation du plateau avec des pions
 board = Board()
 board.initialize_board()
+
 
 # Création de la fenêtre principale
 fenetre = ctk.CTk()
