@@ -49,12 +49,20 @@ class Board:
                     self.grid[intermediate[0]][intermediate[1]] = 0  # Retire la pièce mangée
                     piece_captured = True  # Indique qu'une pièce a été capturée
 
+
             # Effectue le mouvement
             self.grid[start[0]][start[1]] = 0  # Vide la position de départ
             self.grid[end[0]][end[1]] = piece  # Place la pièce dans la position d'arrivée
+<<<<<<< HEAD
 
             return True, piece_captured  # Retourne si le mouvement est valide et si une capture a eu lieu
         return False, False  # Mouvement invalide, aucune capture
+=======
+            return True
+
+        return False
+>>>>>>> ec8ebb3edf2c9340cea934c726274a4e2789e495
+
 
     def is_valid_move(self, start, end, color_piece):
         """
@@ -86,6 +94,9 @@ class Board:
 
         return False
 
+
+    def get_grid(self):
+        return self.grid
 
 
 
