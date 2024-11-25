@@ -137,23 +137,27 @@ class InterfaceJeuDeDames:
     def afficher_pieces(self):
         """Affiche les pions noirs et blancs selon les positions du board pour une grille 10x10."""
         taille_case = 60
-        rayon_pion = taille_case // 2 - 10
 
         for i in range(10):
             for j in range(10):
                 couleur_pion = None
-                if self.board.grid[i][j] in ["BQ", "B"]:
+                if self.board.grid[i][j] == "B":
                     couleur_pion = "#000000"
                     piece = Piece(self.board.grid[i][j],(i,j))
-                elif self.board.grid[i][j] in ["W", "WQ"]:
-                    couleur_pion = "#FF0000"
+                elif self.board.grid[i][j] == "W":
+                    couleur_pion = "#FFFFFF"
                     piece = Piece(self.board.grid[i][j],(i,j))
+                elif self.board.grid[i][j] == "BQ":
+                    couleur_pion = "#393939"
+                    piece = Piece(self.board.grid[i][j],(i,j))
+                elif self.board.grid[i][j] == "WQ":
+                    couleur_pion = "#e3e3e3"
 
 
                 if couleur_pion:
                     x1, y1 = j * taille_case + 10, i * taille_case + 10
                     x2, y2 = (j + 1) * taille_case - 10, (i + 1) * taille_case - 10
-                    pion_id = self.canvas.create_oval(x1, y1, x2, y2, fill=couleur_pion, outline="")
+                    pion_id = self.canvas.create_oval(x1, y1, x2, y2, fill=couleur_pion, outline="black",width=3)
                     self.pions[pion_id] = piece
                     self.canvas.tag_bind(pion_id, "<ButtonPress-1>", self.start_drag)
                     self.canvas.tag_bind(pion_id, "<B1-Motion>", self.drag)
@@ -197,10 +201,8 @@ class InterfaceJeuDeDames:
 
             if mouvement_valide:
                 print(f"Pion déplacé de {self.position_initiale} à {position_finale}")
-
                 if piece_mangee:
                     print(f"Une pièce a été mangée en se déplaçant de {self.position_initiale} à {position_finale}")
-                    self.rafraichir_pieces()
 
                 # Met à jour la position sur le canevas pour la position finale
                 x1, y1 = position_finale[1] * 60 + 10, position_finale[0] * 60 + 10
@@ -212,7 +214,7 @@ class InterfaceJeuDeDames:
                     self.board.current_turn = 'W' if self.board.current_turn == 'B' else 'B'
 
                 # Mettre à jour le tour du joueur
-
+                self.rafraichir_pieces()
                 self.mettre_a_jour_tour()
                 print(self.board.grid)
 
