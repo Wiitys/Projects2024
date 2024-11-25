@@ -157,7 +157,7 @@ class InterfaceJeuDeDames:
                 if couleur_pion:
                     x1, y1 = j * taille_case + 10, i * taille_case + 10
                     x2, y2 = (j + 1) * taille_case - 10, (i + 1) * taille_case - 10
-                    pion_id = self.canvas.create_oval(x1, y1, x2, y2, fill=couleur_pion, outline="black",width=3)
+                    pion_id = self.canvas.create_oval(x1, y1, x2, y2, fill=couleur_pion, outline="black", width="3")
                     self.pions[pion_id] = piece
                     self.canvas.tag_bind(pion_id, "<ButtonPress-1>", self.start_drag)
                     self.canvas.tag_bind(pion_id, "<B1-Motion>", self.drag)
@@ -201,6 +201,7 @@ class InterfaceJeuDeDames:
 
             if mouvement_valide:
                 print(f"Pion déplacé de {self.position_initiale} à {position_finale}")
+
                 if piece_mangee:
                     print(f"Une pièce a été mangée en se déplaçant de {self.position_initiale} à {position_finale}")
 
