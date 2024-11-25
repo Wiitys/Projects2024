@@ -146,14 +146,14 @@ class InterfaceJeuDeDames:
                     couleur_pion = "#000000"
                     piece = Piece(self.board.grid[i][j],(i,j))
                 elif self.board.grid[i][j] in ["W", "WQ"]:
-                    couleur_pion = "#FF0000"
+                    couleur_pion = "#FFFFFF"
                     piece = Piece(self.board.grid[i][j],(i,j))
 
 
                 if couleur_pion:
                     x1, y1 = j * taille_case + 10, i * taille_case + 10
                     x2, y2 = (j + 1) * taille_case - 10, (i + 1) * taille_case - 10
-                    pion_id = self.canvas.create_oval(x1, y1, x2, y2, fill=couleur_pion, outline="")
+                    pion_id = self.canvas.create_oval(x1, y1, x2, y2, fill=couleur_pion, outline="black", width="3")
                     self.pions[pion_id] = piece
                     self.canvas.tag_bind(pion_id, "<ButtonPress-1>", self.start_drag)
                     self.canvas.tag_bind(pion_id, "<B1-Motion>", self.drag)
