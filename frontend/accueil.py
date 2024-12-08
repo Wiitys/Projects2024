@@ -53,7 +53,7 @@ class InterfaceJeuDeDames:
         self.position_initiale = None
 
         # Affichage du tour du joueur
-        self.tour_label = ctk.CTkLabel(fenetre, text="Au tour de : Rouge", font=("Helvetica", 20), text_color="#FFD700")
+        self.tour_label = ctk.CTkLabel(fenetre, text="Au tour de : Blanc", font=("Helvetica", 20), text_color="#FFD700")
         self.tour_label.pack(pady=20)
 
 
@@ -158,17 +158,23 @@ class InterfaceJeuDeDames:
                 print("coord pion : ", pion[0] , " = " , pion[1].x, pion[1].y)
                 # Bouger le pion avec ses nouvelles coordonnées
                 self.canvas.coords(pion[0], x1, y1,x2, y2)
+                self.changement_couleur(pion)
 
-                #On change la couleur du pion si c'est une reine
-                if pion[1].color == "WQ":
-                    self.canvas.itemconfigure(pion[0], fill="#FFD700")  # Changer la couleur en jaune
-                elif pion[1].color == "BQ":
-                    self.canvas.itemconfigure(pion[0], fill="#B8860B")  # Changer la couleur en gris
             else :
                 self.canvas.delete(pion[0])
 
             print("pion[0] : ", pion[0])
         print("liste pions : ",self.pions)
+
+
+    def changement_couleur(self, pion):
+        """Change la couleur quand une dame passe reine"""
+        # On change la couleur du pion si c'est une reine
+        if pion[1].color == "WQ":
+            self.canvas.itemconfigure(pion[0], fill="#FFD700")  # Changer la couleur en jaune
+        elif pion[1].color == "BQ":
+            self.canvas.itemconfigure(pion[0], fill="#B8860B")  # Changer la couleur en gris
+
 
     def afficher_pieces(self):
         """Affiche les pions noirs et blancs selon les positions du board pour une grille 10x10."""
@@ -249,7 +255,7 @@ class InterfaceJeuDeDames:
 
             else:
                 print("self.pions : " , self.pions)
-                print("couleur du pion, couleur du pion qui doit jouer, couleur du pion qui doit jouer + Q" ,self.pions[self.pion_selectionne].color, self.board.current_turn, self.board.current_turn + "Q")
+                print("couleur du pion, couleur du pion qui doit jouer, couleur du pion qui doit jouer+Q" ,self.pions[self.pion_selectionne].color, self.board.current_turn, self.board.current_turn + "Q")
                 if self.pions[self.pion_selectionne].color != self.board.current_turn or self.pions[self.pion_selectionne].color != self.board.current_turn + "Q":
                     print(
                         f"Déplacement invalide de {self.position_initiale} à {position_finale}, ce n'est pas votre tour")

@@ -84,41 +84,42 @@ class Board:
 
 
 
+
     def is_valid_move(self, start, end, piece):
         """
         Vérifie si un mouvement est valide. Un mouvement de deux cases est valide si une pièce peut être mangée.
         """
         # Vérifie que la case de départ contient une pièce ("W" ou "B") et que la case d'arrivée est vide (0)
-        if piece.color != (self.current_turn or self.current_turn + "Q"):
+        if (piece.color != self.current_turn) and (piece.color != self.current_turn + "Q"):
             return False
-        if self.grid[end[0]][end[1]] != 0 or self.grid[start[0]][start[1]] not in ("W", "B"):
+        if self.grid[end[0]][end[1]] != 0 or self.grid[start[0]][start[1]] not in ("W", "B","WQ","BQ"):
             return False
 
         row_diff = end[0] - start[0]  # Différence sur les lignes
         col_diff = abs(start[1] - end[1])  # Différence absolue sur les colonnes
 
         #Si la piece est une reine ... Sinon
-        if not piece.isQueen:
-            # Vérifie que le mouvement est dans la direction correcte pour un mouvement simple
-            if abs(row_diff) == 1 and col_diff == 1:  # Mouvement simple
+        print("reine is queen ? : " ,piece.isQueen)
+        print("row diff col diff : ", abs(row_diff) ,col_diff)
+        # Vérifie que le mouvement est dans la direction correcte pour un mouvement simple
+        if abs(row_diff) == 1 and col_diff == 1:  # Mouvement simple
+            if not piece.isQueen :
                 if piece.color == "W" and row_diff <= 0:  # Blancs doivent avancer vers le bas
                     return False
-                if piece.color == "B" and row_diff >= 0:  # Noirs doivent avancer vers le haut
+                if piece.color == "B" and row_diff >= 0:  # Noirs doivent avancer vers le haut*
                     return False
                 return True
-        else :
-            return True
+            else:
+                return True
+        # Vérifie un mouvement de capture (deux cases)
+        if abs(row_diff) == 2 and col_diff == 2:
 
-
-        if not piece.isQueen :
-            # Vérifie un mouvement de capture (deux cases)
-            if abs(row_diff) == 2 and col_diff == 2:
-                intermediate = self.get_intermediate_position(start, end)
-                # Capture uniquement si la case intermédiaire contient une pièce adverse
-                if self.grid[intermediate[0]][intermediate[1]] in ("W", "B") and self.grid[intermediate[0]][intermediate[1]] != piece.color:
-                    return True
-
-            return False
+            intermediate = self.get_intermediate_position(start, end)
+            # Capture uniquement si la case intermédiaire contient une pièce adverse
+            if self.grid[intermediate[0]][intermediate[1]] in ("W", "B") and self.grid[intermediate[0]][intermediate[1]] != piece.color:
+                return True
+        print("cc")
+        return False
 
 
     def get_grid(self):
