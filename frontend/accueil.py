@@ -158,6 +158,12 @@ class InterfaceJeuDeDames:
                 print("coord pion : ", pion[0] , " = " , pion[1].x, pion[1].y)
                 # Bouger le pion avec ses nouvelles coordonnées
                 self.canvas.coords(pion[0], x1, y1,x2, y2)
+
+                #On change la couleur du pion si c'est une reine
+                if pion[1].color == "WQ":
+                    self.canvas.itemconfigure(pion[0], fill="#FFD700")  # Changer la couleur en jaune
+                elif pion[1].color == "BQ":
+                    self.canvas.itemconfigure(pion[0], fill="#B8860B")  # Changer la couleur en gris
             else :
                 self.canvas.delete(pion[0])
 
