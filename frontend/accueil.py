@@ -146,17 +146,20 @@ class InterfaceJeuDeDames:
         return color
 
     def afficher_pieces_autre_fois(self):
-        """Affiche les pions noirs et blancs selon les positions du board pour une grille 10x10."""
+        """Réaffiche la nouvelle position des pions en fonction de leurs nouvelles coordonnées (si elles ont changées)."""
         taille_case = 60
         print("self.pions", self.pions)
         for pion in self.pions.items() :
-            couleur = self.color_pion(pion[1].color)
-            # Coordonnées de l'ovale
-            x1, y1 = pion[1].y * taille_case + 10, pion[1].x * taille_case + 10
-            x2, y2 = (pion[1].y + 1) * taille_case - 10, (pion[1].x + 1) * taille_case - 10
-            print("coord pion : ", pion[0] , " = " , pion[1].x, pion[1].y)
-            # Dessiner le pion
-            self.canvas.coords(pion[0], x1, y1,x2, y2)
+            if pion[1].is_alive:
+                couleur = self.color_pion(pion[1].color)
+                # Coordonnées de l'ovale
+                x1, y1 = pion[1].y * taille_case + 10, pion[1].x * taille_case + 10
+                x2, y2 = (pion[1].y + 1) * taille_case - 10, (pion[1].x + 1) * taille_case - 10
+                print("coord pion : ", pion[0] , " = " , pion[1].x, pion[1].y)
+                # Bouger le pion avec ses nouvelles coordonnées
+                self.canvas.coords(pion[0], x1, y1,x2, y2)
+            else :
+                self.canvas.delete(pion[0])
 
             print("pion[0] : ", pion[0])
         print("liste pions : ",self.pions)
@@ -210,10 +213,12 @@ class InterfaceJeuDeDames:
             print("pion select", self.pion_selectionne)
 
             # Appelle `move_piece` pour mettre à jour la logique du plateau
-            mouvement_valide, piece_mangee,piece = self.board.move_piece(
+            mouvement_valide, piece_mangee,piece, piece_mangee_x, piece_mangee_y = self.board.move_piece(
                 self.position_initiale, position_finale, self.pions[self.pion_selectionne]
             )
 
+            if piece_mangee_x != -1 and piece_mangee_y !=-1 :
+                self.maj_pion_apres_mange(piece_mangee_x,piece_mangee_y)
 
             if mouvement_valide:
                 print(f"Pion déplacé de {self.position_initiale} à {position_finale}")
@@ -253,6 +258,16 @@ class InterfaceJeuDeDames:
             # Réinitialise les variables
             self.pion_selectionne = None
             self.position_initiale = None
+
+
+
+    def maj_pion_apres_mange(self, piece_mangee_x, piece_mangee_y):
+        """Change l'attribut is_alive à false si le pion vient d'être mangé """
+        for pion_id, pion in self.pions.items():
+            if pion.x == piece_mangee_x and pion.y == piece_mangee_y:
+                pion.is_alive = False
+                print(f"Pion {pion_id} a été mangé")
+
 
     def mettre_a_jour_tour(self):
         """Met à jour le texte affichant le tour du joueur."""

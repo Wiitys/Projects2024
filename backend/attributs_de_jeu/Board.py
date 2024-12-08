@@ -36,14 +36,18 @@ class Board:
         :return: Boolean, Boolean -> si la pièce est déplaçable ou non et si une capture a eu lieu
         """
         piece_captured = False  # Variable pour suivre si une pièce a été mangée
-
+        piece_mange_x= -1
+        piece_mange_y = -1
         if self.is_valid_move(start, end, piece):
             piece.color = self.grid[start[0]][start[1]]  # Stocke le type de pièce ("W" ou "B")
 
             # Vérifie s'il y a une pièce intermédiaire pour un mouvement de saut
             if abs(start[0] - end[0]) == 2 and abs(start[1] - end[1]) == 2:
                 intermediate = self.get_intermediate_position(start, end)
+                piece_mange_x = intermediate[0]
+                piece_mange_y = intermediate[1]
                 print("case inter", intermediate)
+
 
                 # Si une pièce ennemie se trouve à la position intermédiaire, elle est mangée
                 if self.grid[intermediate[0]][intermediate[1]] in ("W", "B"):
@@ -74,10 +78,9 @@ class Board:
                     self.grid[end[0]][end[1]] = 'BQ'
                     piece.color = "BQ"
 
-            print("Is queen ? " , piece.isQueen)
 
-            return True, piece_captured, piece # Retourne si le mouvement est valide et si une capture a eu lieu
-        return False, False,piece  # Mouvement invalide, aucune capture
+            return True, piece_captured, piece, piece_mange_x, piece_mange_y # Retourne si le mouvement est valide et si une capture a eu lieu
+        return False, False,piece,piece_mange_x, piece_mange_y  # Mouvement invalide, aucune capture
 
 
 
