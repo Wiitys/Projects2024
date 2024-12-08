@@ -56,6 +56,7 @@ class InterfaceJeuDeDames:
         self.tour_label = ctk.CTkLabel(fenetre, text="Au tour de : Rouge", font=("Helvetica", 20), text_color="#FFD700")
         self.tour_label.pack(pady=20)
 
+
         # Affichage du nombre de pions restants
         self.pions_restants_label = ctk.CTkLabel(
             fenetre, text="Pions restants - Blanc: 20 | Noir: 20",
@@ -152,18 +153,22 @@ class InterfaceJeuDeDames:
                     piece = Piece(self.board.grid[i][j],(i,j))
                 elif self.board.grid[i][j] == "WQ":
                     couleur_pion = "#e3e3e3"
+                    piece = Piece(self.board.grid[i][j], (i, j))
 
 
                 if couleur_pion:
                     x1, y1 = j * taille_case + 10, i * taille_case + 10
                     x2, y2 = (j + 1) * taille_case - 10, (i + 1) * taille_case - 10
                     pion_id = self.canvas.create_oval(x1, y1, x2, y2, fill=couleur_pion, outline="black", width="3")
+                    print("pion id : ", pion_id)
                     self.pions[pion_id] = piece
                     self.canvas.tag_bind(pion_id, "<ButtonPress-1>", self.start_drag)
                     self.canvas.tag_bind(pion_id, "<B1-Motion>", self.drag)
                     self.canvas.tag_bind(pion_id, "<ButtonRelease-1>", self.drop)
                 # Mettre à jour les pions restants après affichage initial
             self.mettre_a_jour_pions_restants()
+
+
 
     def start_drag(self, event):
         """Démarre le drag d'un pion."""
@@ -196,8 +201,9 @@ class InterfaceJeuDeDames:
 
             # Appelle `move_piece` pour mettre à jour la logique du plateau
             mouvement_valide, piece_mangee = self.board.move_piece(
-                self.position_initiale, position_finale, self.pions[self.pion_selectionne].color
+                self.position_initiale, position_finale, self.pions[self.pion_selectionne]
             )
+
 
             if mouvement_valide:
                 print(f"Pion déplacé de {self.position_initiale} à {position_finale}")
@@ -220,7 +226,9 @@ class InterfaceJeuDeDames:
                 print(self.board.grid)
 
             else:
-                if self.pions[self.pion_selectionne].color != self.board.current_turn:
+                print("self.pions : " , self.pions)
+                print("couleur du pion, couleur du pion qui doit jouer, couleur du pion qui doit jouer + Q" ,self.pions[self.pion_selectionne].color, self.board.current_turn, self.board.current_turn + "Q")
+                if self.pions[self.pion_selectionne].color != self.board.current_turn or self.pions[self.pion_selectionne].color != self.board.current_turn + "Q":
                     print(
                         f"Déplacement invalide de {self.position_initiale} à {position_finale}, ce n'est pas votre tour")
                 else:
