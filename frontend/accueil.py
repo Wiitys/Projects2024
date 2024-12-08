@@ -128,12 +128,38 @@ class InterfaceJeuDeDames:
         # Réinitialise l'affichage
         self.canvas.delete("all")  # Efface tout sur le canevas
         self.afficher_plateau()  # Redessine le plateau
-        self.rafraichir_pieces()  # Réaffiche les pièces
         self.mettre_a_jour_pions_restants()
         self.mettre_a_jour_tour()
 
         # Réaffiche le bouton "JOUER" pour permettre de relancer la partie
         self.bouton_jouer.pack(pady=40)
+
+    def color_pion(self,color):
+        if color == "B":
+            color = "#000000"
+        elif color == "W":
+            color = "#FFFFFF"
+        elif color == "BQ":
+            color= "#393939"
+        elif color == "WQ":
+            color = "#e3e3e3"
+        return color
+
+    def afficher_pieces_autre_fois(self):
+        """Affiche les pions noirs et blancs selon les positions du board pour une grille 10x10."""
+        taille_case = 60
+        print("self.pions", self.pions)
+        for pion in self.pions.items() :
+            couleur = self.color_pion(pion[1].color)
+            # Coordonnées de l'ovale
+            x1, y1 = pion[1].y * taille_case + 10, pion[1].x * taille_case + 10
+            x2, y2 = (pion[1].y + 1) * taille_case - 10, (pion[1].x + 1) * taille_case - 10
+            print("coord pion : ", pion[0] , " = " , pion[1].x, pion[1].y)
+            # Dessiner le pion
+            self.canvas.coords(pion[0], x1, y1,x2, y2)
+
+            print("pion[0] : ", pion[0])
+        print("liste pions : ",self.pions)
 
     def afficher_pieces(self):
         """Affiche les pions noirs et blancs selon les positions du board pour une grille 10x10."""
@@ -141,25 +167,16 @@ class InterfaceJeuDeDames:
 
         for i in range(10):
             for j in range(10):
-                couleur_pion = None
-                if self.board.grid[i][j] == "B":
-                    couleur_pion = "#000000"
-                    piece = Piece(self.board.grid[i][j],(i,j))
-                elif self.board.grid[i][j] == "W":
-                    couleur_pion = "#FFFFFF"
-                    piece = Piece(self.board.grid[i][j],(i,j))
-                elif self.board.grid[i][j] == "BQ":
-                    couleur_pion = "#393939"
-                    piece = Piece(self.board.grid[i][j],(i,j))
-                elif self.board.grid[i][j] == "WQ":
-                    couleur_pion = "#e3e3e3"
-                    piece = Piece(self.board.grid[i][j], (i, j))
+                piece = Piece(self.board.grid[i][j],False,i,j)
 
+                code_hexa_pion = self.color_pion(self.board.grid[i][j])
 
-                if couleur_pion:
+                if code_hexa_pion:
                     x1, y1 = j * taille_case + 10, i * taille_case + 10
                     x2, y2 = (j + 1) * taille_case - 10, (i + 1) * taille_case - 10
-                    pion_id = self.canvas.create_oval(x1, y1, x2, y2, fill=couleur_pion, outline="black", width="3")
+                    pion_id = self.canvas.create_oval(x1, y1, x2, y2, fill=code_hexa_pion, outline="black", width="3")
+                    print('pions : ', self.pions)
+                    print('x1 et x2 ')
                     print("pion id : ", pion_id)
                     self.pions[pion_id] = piece
                     self.canvas.tag_bind(pion_id, "<ButtonPress-1>", self.start_drag)
@@ -174,17 +191,9 @@ class InterfaceJeuDeDames:
         """Démarre le drag d'un pion."""
         # Enregistre l'ID du pion sélectionné et la position initiale
         self.pion_selectionne = event.widget.find_withtag("current")[0]
+        print("pion selectionne  = " , self.pion_selectionne)
         self.position_initiale = (event.y // 60, event.x // 60)
 
-    def rafraichir_pieces(self):
-        """Efface et réaffiche toutes les pièces sur le canevas en fonction de l'état du plateau."""
-        # Supprime tous les pions actuels du canevas
-        for pion_id in list(self.pions.keys()):
-            self.canvas.delete(pion_id)
-        self.pions.clear()
-
-        # Réaffiche toutes les pièces
-        self.afficher_pieces()
 
     def drag(self, event):
         """Déplace le pion sélectionné avec la souris."""
@@ -198,15 +207,17 @@ class InterfaceJeuDeDames:
         if self.pion_selectionne and self.position_initiale:
             # Position finale du pion
             position_finale = (event.y // 60, event.x // 60)
+            print("pion select", self.pion_selectionne)
 
             # Appelle `move_piece` pour mettre à jour la logique du plateau
-            mouvement_valide, piece_mangee = self.board.move_piece(
+            mouvement_valide, piece_mangee,piece = self.board.move_piece(
                 self.position_initiale, position_finale, self.pions[self.pion_selectionne]
             )
 
 
             if mouvement_valide:
                 print(f"Pion déplacé de {self.position_initiale} à {position_finale}")
+                print("pion selectionné x y = ", self.pions[self.pion_selectionne].x, self.pions[self.pion_selectionne].y)
 
                 if piece_mangee:
                     print(f"Une pièce a été mangée en se déplaçant de {self.position_initiale} à {position_finale}")
@@ -221,7 +232,7 @@ class InterfaceJeuDeDames:
                     self.board.current_turn = 'W' if self.board.current_turn == 'B' else 'B'
 
                 # Mettre à jour le tour du joueur
-                self.rafraichir_pieces()
+                self.afficher_pieces_autre_fois()
                 self.mettre_a_jour_tour()
                 print(self.board.grid)
 

@@ -43,6 +43,7 @@ class Board:
             # Vérifie s'il y a une pièce intermédiaire pour un mouvement de saut
             if abs(start[0] - end[0]) == 2 and abs(start[1] - end[1]) == 2:
                 intermediate = self.get_intermediate_position(start, end)
+                print("case inter", intermediate)
 
                 # Si une pièce ennemie se trouve à la position intermédiaire, elle est mangée
                 if self.grid[intermediate[0]][intermediate[1]] in ("W", "B"):
@@ -54,9 +55,9 @@ class Board:
             # Effectue le mouvement
             self.grid[start[0]][start[1]] = 0  # Vide la position de départ
             self.grid[end[0]][end[1]] = piece.color  # Place la pièce dans la position d'arrivée
-            # Si la ligne sur laquelle je veux aller est la 10 eme alors je vais devenir une reine
-            print('piece', piece)
-            print("self.grid : ", self.grid[end[0]][end[1]])
+            piece.x = end[0]
+            piece.y = end[1]
+            print('nouvelles coordonées =', piece.x, piece.y)
 
             if end[0] == 9:
                 piece.isQueen = True
@@ -74,10 +75,9 @@ class Board:
                     piece.color = "BQ"
 
             print("Is queen ? " , piece.isQueen)
-            print("position : ", piece.position)
 
-            return True, piece_captured  # Retourne si le mouvement est valide et si une capture a eu lieu
-        return False, False  # Mouvement invalide, aucune capture
+            return True, piece_captured, piece # Retourne si le mouvement est valide et si une capture a eu lieu
+        return False, False,piece  # Mouvement invalide, aucune capture
 
 
 
