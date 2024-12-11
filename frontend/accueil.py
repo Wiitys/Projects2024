@@ -200,8 +200,6 @@ class InterfaceJeuDeDames:
                 # Mettre à jour les pions restants après affichage initial
             self.mettre_a_jour_pions_restants()
 
-
-
     def start_drag(self, event):
         """Démarre le drag d'un pion."""
         # Enregistre l'ID du pion sélectionné et la position initiale
@@ -225,7 +223,7 @@ class InterfaceJeuDeDames:
             print("pion select", self.pion_selectionne)
 
             # Appelle `move_piece` pour mettre à jour la logique du plateau
-            mouvement_valide, piece_mangee,piece, piece_mangee_x, piece_mangee_y = self.board.move_piece(
+            mouvement_valide, piece_mangee,piece, piece_mangee_x, piece_mangee_y = self.board.move_piece_handler(
                 self.position_initiale, position_finale, self.pions[self.pion_selectionne]
             )
 
