@@ -48,9 +48,8 @@ class InterfaceJeuDeDames:
         self.position_initiale = None
 
         # Affichage du tour du joueur
-        self.tour_label = ctk.CTkLabel(fenetre, text="Au tour de : Blanc", font=("Helvetica", 20), text_color="#FFD700")
+        self.tour_label = ctk.CTkLabel(fenetre, text="Au tour de : Rouge", font=("Helvetica", 20), text_color="#FFD700")
         self.tour_label.pack(pady=20)
-
 
         # Affichage du nombre de pions restants
         self.pions_restants_label = ctk.CTkLabel(
@@ -72,9 +71,7 @@ class InterfaceJeuDeDames:
     def mettre_a_jour_pions_restants(self):
         """Met à jour l'affichage du nombre de pions restants pour chaque joueur et vérifie si un joueur a gagné."""
         nombre_blancs = sum(1 for i in range(10) for j in range(10) if self.board.grid[i][j] == "W")
-        print(nombre_blancs)
         nombre_noirs = sum(1 for i in range(10) for j in range(10) if self.board.grid[i][j] == "B")
-        print(nombre_noirs)
         self.pions_restants_label.configure(text=f"Pions restants - Blanc: {nombre_blancs} | Noir: {nombre_noirs}")
 
         # Vérification de la condition de victoire, seulement si la partie n'est pas terminée
@@ -125,50 +122,12 @@ class InterfaceJeuDeDames:
         # Réinitialise l'affichage
         self.canvas.delete("all")  # Efface tout sur le canevas
         self.afficher_plateau()  # Redessine le plateau
-        self.afficher_pieces()
+        self.rafraichir_pieces()  # Réaffiche les pièces
         self.mettre_a_jour_pions_restants()
         self.mettre_a_jour_tour()
 
         # Réaffiche le bouton "JOUER" pour permettre de relancer la partie
         self.bouton_jouer.pack(pady=40)
-
-    def color_pion(self,color):
-        if color == "B":
-            color = "#000000"
-        elif color == "W":
-            color = "#FFFFFF"
-        elif color == "BQ":
-            color= "#393939"
-        elif color == "WQ":
-            color = "#e3e3e3"
-        return color
-
-    def afficher_pieces_autre_fois(self):
-        """Réaffiche la nouvelle position des pions en fonction de leurs nouvelles coordonnées (si elles ont changées)."""
-        taille_case = 60
-        for pion in self.pions.items() :
-            if pion[1].is_alive:
-                couleur = self.color_pion(pion[1].color)
-                # Coordonnées de l'ovale
-                x1, y1 = pion[1].y * taille_case + 10, pion[1].x * taille_case + 10
-                x2, y2 = (pion[1].y + 1) * taille_case - 10, (pion[1].x + 1) * taille_case - 10
-                # Bouger le pion avec ses nouvelles coordonnées
-                self.canvas.coords(pion[0], x1, y1,x2, y2)
-                self.changement_couleur(pion)
-
-            else :
-                self.canvas.delete(pion[0])
-        self.mettre_a_jour_pions_restants()
-
-
-    def changement_couleur(self, pion):
-        """Change la couleur quand une dame passe reine"""
-        # On change la couleur du pion si c'est une reine
-        if pion[1].color == "WQ":
-            self.canvas.itemconfigure(pion[0], fill="#FFD700")  # Changer la couleur en jaune
-        elif pion[1].color == "BQ":
-            self.canvas.itemconfigure(pion[0], fill="#B8860B")  # Changer la couleur en gris
-
 
     def afficher_pieces(self):
         """Affiche les pions noirs et blancs selon les positions du board pour une grille 10x10."""
@@ -176,28 +135,46 @@ class InterfaceJeuDeDames:
 
         for i in range(10):
             for j in range(10):
-                piece = Piece(self.board.grid[i][j],False,i,j)
+                couleur_pion = None
+                if self.board.grid[i][j] == "B":
+                    couleur_pion = "#000000"
+                    piece = Piece(self.board.grid[i][j],(i,j))
+                elif self.board.grid[i][j] == "W":
+                    couleur_pion = "#FFFFFF"
+                    piece = Piece(self.board.grid[i][j],(i,j))
+                elif self.board.grid[i][j] == "BQ":
+                    couleur_pion = "#393939"
+                    piece = Piece(self.board.grid[i][j],(i,j))
+                elif self.board.grid[i][j] == "WQ":
+                    couleur_pion = "#e3e3e3"
 
-                code_hexa_pion = self.color_pion(self.board.grid[i][j])
 
-                if code_hexa_pion:
+                if couleur_pion:
                     x1, y1 = j * taille_case + 10, i * taille_case + 10
                     x2, y2 = (j + 1) * taille_case - 10, (i + 1) * taille_case - 10
-                    pion_id = self.canvas.create_oval(x1, y1, x2, y2, fill=code_hexa_pion, outline="black", width="3")
+                    pion_id = self.canvas.create_oval(x1, y1, x2, y2, fill=couleur_pion, outline="black", width="3")
                     self.pions[pion_id] = piece
                     self.canvas.tag_bind(pion_id, "<ButtonPress-1>", self.start_drag)
                     self.canvas.tag_bind(pion_id, "<B1-Motion>", self.drag)
                     self.canvas.tag_bind(pion_id, "<ButtonRelease-1>", self.drop)
                 # Mettre à jour les pions restants après affichage initial
-        self.mettre_a_jour_pions_restants()
+            self.mettre_a_jour_pions_restants()
 
     def start_drag(self, event):
         """Démarre le drag d'un pion."""
         # Enregistre l'ID du pion sélectionné et la position initiale
         self.pion_selectionne = event.widget.find_withtag("current")[0]
-        print("pion selectionne  = " , self.pion_selectionne)
         self.position_initiale = (event.y // 60, event.x // 60)
 
+    def rafraichir_pieces(self):
+        """Efface et réaffiche toutes les pièces sur le canevas en fonction de l'état du plateau."""
+        # Supprime tous les pions actuels du canevas
+        for pion_id in list(self.pions.keys()):
+            self.canvas.delete(pion_id)
+        self.pions.clear()
+
+        # Réaffiche toutes les pièces
+        self.afficher_pieces()
 
     def drag(self, event):
         """Déplace le pion sélectionné avec la souris."""
@@ -211,19 +188,14 @@ class InterfaceJeuDeDames:
         if self.pion_selectionne and self.position_initiale:
             # Position finale du pion
             position_finale = (event.y // 60, event.x // 60)
-            print("pion select", self.pion_selectionne)
 
             # Appelle `move_piece` pour mettre à jour la logique du plateau
-            mouvement_valide, piece_mangee,piece, piece_mangee_x, piece_mangee_y = self.board.move_piece_handler(
-                self.position_initiale, position_finale, self.pions[self.pion_selectionne]
+            mouvement_valide, piece_mangee = self.board.move_piece(
+                self.position_initiale, position_finale, self.pions[self.pion_selectionne].color
             )
-
-            if piece_mangee_x != -1 and piece_mangee_y !=-1 :
-                self.maj_pion_apres_mange(piece_mangee_x,piece_mangee_y)
 
             if mouvement_valide:
                 print(f"Pion déplacé de {self.position_initiale} à {position_finale}")
-                print("pion selectionné x y = ", self.pions[self.pion_selectionne].x, self.pions[self.pion_selectionne].y)
 
                 if piece_mangee:
                     print(f"Une pièce a été mangée en se déplaçant de {self.position_initiale} à {position_finale}")
@@ -238,13 +210,12 @@ class InterfaceJeuDeDames:
                     self.board.current_turn = 'W' if self.board.current_turn == 'B' else 'B'
 
                 # Mettre à jour le tour du joueur
-                self.afficher_pieces_autre_fois()
+                self.rafraichir_pieces()
                 self.mettre_a_jour_tour()
                 print(self.board.grid)
 
             else:
-                print("couleur du pion, couleur du pion qui doit jouer, couleur du pion qui doit jouer+Q" ,self.pions[self.pion_selectionne].color, self.board.current_turn, self.board.current_turn + "Q")
-                if self.pions[self.pion_selectionne].color != self.board.current_turn or self.pions[self.pion_selectionne].color != self.board.current_turn + "Q":
+                if self.pions[self.pion_selectionne].color != self.board.current_turn:
                     print(
                         f"Déplacement invalide de {self.position_initiale} à {position_finale}, ce n'est pas votre tour")
                 else:
@@ -258,16 +229,6 @@ class InterfaceJeuDeDames:
             # Réinitialise les variables
             self.pion_selectionne = None
             self.position_initiale = None
-
-
-
-    def maj_pion_apres_mange(self, piece_mangee_x, piece_mangee_y):
-        """Change l'attribut is_alive à false si le pion vient d'être mangé """
-        for pion_id, pion in self.pions.items():
-            if pion.x == piece_mangee_x and pion.y == piece_mangee_y:
-                pion.is_alive = False
-                print(f"Pion {pion_id} a été mangé")
-
 
     def mettre_a_jour_tour(self):
         """Met à jour le texte affichant le tour du joueur."""
