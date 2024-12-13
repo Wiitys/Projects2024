@@ -77,7 +77,9 @@ class InterfaceJeuDeDames:
     def mettre_a_jour_pions_restants(self):
         """Met à jour l'affichage du nombre de pions restants pour chaque joueur et vérifie si un joueur a gagné."""
         nombre_blancs = sum(1 for i in range(10) for j in range(10) if self.board.grid[i][j] == "W")
+        print(nombre_blancs)
         nombre_noirs = sum(1 for i in range(10) for j in range(10) if self.board.grid[i][j] == "B")
+        print(nombre_noirs)
         self.pions_restants_label.configure(text=f"Pions restants - Blanc: {nombre_blancs} | Noir: {nombre_noirs}")
 
         # Vérification de la condition de victoire, seulement si la partie n'est pas terminée
@@ -128,6 +130,7 @@ class InterfaceJeuDeDames:
         # Réinitialise l'affichage
         self.canvas.delete("all")  # Efface tout sur le canevas
         self.afficher_plateau()  # Redessine le plateau
+        self.afficher_pieces()
         self.mettre_a_jour_pions_restants()
         self.mettre_a_jour_tour()
 
@@ -148,23 +151,19 @@ class InterfaceJeuDeDames:
     def afficher_pieces_autre_fois(self):
         """Réaffiche la nouvelle position des pions en fonction de leurs nouvelles coordonnées (si elles ont changées)."""
         taille_case = 60
-        print("self.pions", self.pions)
         for pion in self.pions.items() :
             if pion[1].is_alive:
                 couleur = self.color_pion(pion[1].color)
                 # Coordonnées de l'ovale
                 x1, y1 = pion[1].y * taille_case + 10, pion[1].x * taille_case + 10
                 x2, y2 = (pion[1].y + 1) * taille_case - 10, (pion[1].x + 1) * taille_case - 10
-                print("coord pion : ", pion[0] , " = " , pion[1].x, pion[1].y)
                 # Bouger le pion avec ses nouvelles coordonnées
                 self.canvas.coords(pion[0], x1, y1,x2, y2)
                 self.changement_couleur(pion)
 
             else :
                 self.canvas.delete(pion[0])
-
-            print("pion[0] : ", pion[0])
-        print("liste pions : ",self.pions)
+        self.mettre_a_jour_pions_restants()
 
 
     def changement_couleur(self, pion):
@@ -190,15 +189,12 @@ class InterfaceJeuDeDames:
                     x1, y1 = j * taille_case + 10, i * taille_case + 10
                     x2, y2 = (j + 1) * taille_case - 10, (i + 1) * taille_case - 10
                     pion_id = self.canvas.create_oval(x1, y1, x2, y2, fill=code_hexa_pion, outline="black", width="3")
-                    print('pions : ', self.pions)
-                    print('x1 et x2 ')
-                    print("pion id : ", pion_id)
                     self.pions[pion_id] = piece
                     self.canvas.tag_bind(pion_id, "<ButtonPress-1>", self.start_drag)
                     self.canvas.tag_bind(pion_id, "<B1-Motion>", self.drag)
                     self.canvas.tag_bind(pion_id, "<ButtonRelease-1>", self.drop)
                 # Mettre à jour les pions restants après affichage initial
-            self.mettre_a_jour_pions_restants()
+        self.mettre_a_jour_pions_restants()
 
     def start_drag(self, event):
         """Démarre le drag d'un pion."""
@@ -252,7 +248,6 @@ class InterfaceJeuDeDames:
                 print(self.board.grid)
 
             else:
-                print("self.pions : " , self.pions)
                 print("couleur du pion, couleur du pion qui doit jouer, couleur du pion qui doit jouer+Q" ,self.pions[self.pion_selectionne].color, self.board.current_turn, self.board.current_turn + "Q")
                 if self.pions[self.pion_selectionne].color != self.board.current_turn or self.pions[self.pion_selectionne].color != self.board.current_turn + "Q":
                     print(
