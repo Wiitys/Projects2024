@@ -3,8 +3,7 @@ import customtkinter as ctk
 import sys
 import os
 
-
-from backend.Board import Board
+from backend.Plateau import Plateau
 from backend.Piece import Piece
 
 
@@ -14,12 +13,12 @@ ctk.set_default_color_theme("blue")
 
 
 class InterfaceJeuDeDames:
-    def __init__(self, fenetre, board):
+    def __init__(self, fenetre, Plateau):
         self.fenetre = fenetre
-        self.board = board
+        self.Plateau = Plateau
         self.fenetre.title("Jeu de Dames")
         self.fenetre.geometry("650x750")
-        self.board.current_turn = 'W'
+        self.Plateau.tourCourant = 'W'
         self.pions ={}
         self.partie_terminee = False
 
@@ -74,9 +73,9 @@ class InterfaceJeuDeDames:
 
     def mettre_a_jour_pions_restants(self):
         """Met à jour l'affichage du nombre de pions restants pour chaque joueur et vérifie si un joueur a gagné."""
-        nombre_blancs = sum(1 for i in range(10) for j in range(10) if self.board.grid[i][j] == "W")
+        nombre_blancs = sum(1 for i in range(10) for j in range(10) if self.Plateau.grille[i][j] == "W")
         print(nombre_blancs)
-        nombre_noirs = sum(1 for i in range(10) for j in range(10) if self.board.grid[i][j] == "B")
+        nombre_noirs = sum(1 for i in range(10) for j in range(10) if self.Plateau.grille[i][j] == "B")
         print(nombre_noirs)
         self.pions_restants_label.configure(text=f"Pions restants - Blanc: {nombre_blancs} | Noir: {nombre_noirs}")
 
@@ -119,10 +118,10 @@ class InterfaceJeuDeDames:
     def reinitialiser_jeu(self):
         """Réinitialise le jeu à son état initial."""
         # Réinitialise le plateau
-        self.board.initialize_board()
+        self.Plateau.InitialiserPlateau()
 
         # Réinitialise les variables internes
-        self.board.current_turn = 'W'
+        self.Plateau.tourCourant = 'W'
         self.partie_terminee = False
 
         # Réinitialise l'affichage
@@ -174,14 +173,14 @@ class InterfaceJeuDeDames:
 
 
     def afficher_pieces(self):
-        """Affiche les pions noirs et blancs selon les positions du board pour une grille 10x10."""
+        """Affiche les pions noirs et blancs selon les positions du Plateau pour une grille 10x10."""
         taille_case = 60
 
         for i in range(10):
             for j in range(10):
-                piece = Piece(self.board.grid[i][j],False,i,j)
+                piece = Piece(self.Plateau.grille[i][j],False,i,j)
 
-                code_hexa_pion = self.color_pion(self.board.grid[i][j])
+                code_hexa_pion = self.color_pion(self.Plateau.grille[i][j])
 
                 if code_hexa_pion:
                     x1, y1 = j * taille_case + 10, i * taille_case + 10
@@ -217,7 +216,7 @@ class InterfaceJeuDeDames:
             print("pion select", self.pion_selectionne)
 
             # Appelle `move_piece` pour mettre à jour la logique du plateau
-            mouvement_valide, piece_mangee,piece, piece_mangee_x, piece_mangee_y = self.board.move_piece_handler(
+            mouvement_valide, piece_mangee,piece, piece_mangee_x, piece_mangee_y = self.Plateau.GestionnaireDeMouvementPiece(
                 self.position_initiale, position_finale, self.pions[self.pion_selectionne]
             )
 
@@ -238,16 +237,16 @@ class InterfaceJeuDeDames:
 
                 # Alterne le tour des joueurs si aucun mouvement supplémentaire n'est possible
                 if not piece_mangee:  # Passe le tour seulement si aucune capture supplémentaire n'est possible
-                    self.board.current_turn = 'W' if self.board.current_turn == 'B' else 'B'
+                    self.Plateau.tourCourant = 'W' if self.Plateau.tourCourant == 'B' else 'B'
 
                 # Mettre à jour le tour du joueur
                 self.afficher_pieces_autre_fois()
                 self.mettre_a_jour_tour()
-                print(self.board.grid)
+                print(self.Plateau.grille)
 
             else:
-                print("couleur du pion, couleur du pion qui doit jouer, couleur du pion qui doit jouer+Q" ,self.pions[self.pion_selectionne].color, self.board.current_turn, self.board.current_turn + "Q")
-                if self.pions[self.pion_selectionne].color != self.board.current_turn or self.pions[self.pion_selectionne].color != self.board.current_turn + "Q":
+                print("couleur du pion, couleur du pion qui doit jouer, couleur du pion qui doit jouer+Q" ,self.pions[self.pion_selectionne].color, self.Plateau.tourCourant, self.Plateau.tourCourant + "Q")
+                if self.pions[self.pion_selectionne].color != self.Plateau.tourCourant or self.pions[self.pion_selectionne].color != self.Plateau.tourCourant + "Q":
                     print(
                         f"Déplacement invalide de {self.position_initiale} à {position_finale}, ce n'est pas votre tour")
                 else:
@@ -274,7 +273,7 @@ class InterfaceJeuDeDames:
 
     def mettre_a_jour_tour(self):
         """Met à jour le texte affichant le tour du joueur."""
-        if self.board.current_turn == "B":
+        if self.Plateau.tourCourant == "B":
             self.tour_label.configure(text="Au tour de : Noir")
         else:
             self.tour_label.configure(text="Au tour de : Blanc")
@@ -284,5 +283,4 @@ class InterfaceJeuDeDames:
         print("Le jeu commence !")
         self.afficher_pieces()
         self.bouton_jouer.pack_forget()
-
 

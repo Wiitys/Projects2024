@@ -7,17 +7,17 @@ import os
 # Ajouter le chemin du répertoire racine
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from backend.Board import Board
+from backend.Plateau import Plateau
 from frontend.Interface import InterfaceJeuDeDames
 
 # Initialisation du plateau avec des pions
-board = Board()
-board.initialize_board()
+plateau = Plateau()
+plateau.InitialiserPlateau()
 
 
 # Création de la fenêtre principale
 fenetre = ctk.CTk()
-app = InterfaceJeuDeDames(fenetre, board)
+app = InterfaceJeuDeDames(fenetre, plateau)
 
 # Lancer l'application
 fenetre.mainloop()
