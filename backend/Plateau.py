@@ -23,25 +23,47 @@ class Plateau:
             self.grille[v_ligne] = [0 for v_colonne in range(10)]
 
     def ObtenirPositionIntermediaire(self, p_start, p_end):
-        """
-        Renvoie la position intermédiaire entre le départ et l'arrivée si le mouvement est de deux cases
-        """
+        """_summary_
+               Renvoie la position intermédiaire entre le départ et l'arrivée si le mouvement est de deux cases
+    
+        Args:
+            p_start (_type_): position de départ du pion (tab)
+            p_end (_type_): position d'arrivée du pion (tab)
+
+        Returns:
+            _type_: int,int
+        """        
+
         midRow = (p_start[0] + p_end[0]) // 2
         midCol = (p_start[1] + p_end[1]) // 2
         return midRow, midCol
 
     def GestionnaireDeMouvementPiece(self, p_start, p_end, p_piece):
-        """
-        Gère le déplacement en appelant la bonne méthode en fonction du type de pièce.  
-        """
+        """_summary_
+            Gère le déplacement en appelant la bonne méthode en fonction du type de pièce.  
+        Args:
+            p_start (_type_): position de depart du pion (tab)
+            p_end (_type_): position d'arrivée du pion (tab)
+            p_piece (_type_): piece qui souhaite bouger (Piece)
+
+        Returns:
+            _type_: Bool, Piece, p_piece, int, int
+        """        
         if p_piece.isQueen:
             return self.DeplacerReine(p_start, p_end, p_piece)
         else:
             return self.DeplacerPion(p_start, p_end, p_piece)
 
     def VerifieSiMouvementPionValide(self, p_start, p_end, p_piece):
-        """
-        Vérifie si un mouvement est valide pour un pion de base.
+        """_summary_
+            Vérifie si un mouvement est valide pour un pion de base.
+        Args:
+            p_start (_type_): position de départ du pion
+            p_end (_type_): position d'arrivée du pion
+            p_piece (_type_): Piece
+
+        Returns:
+            _type_: Boolean
         """
         if (p_piece.color != self.tourCourant):
             return False
@@ -68,8 +90,15 @@ class Plateau:
         return False
 
     def VerifieSiMouvementReineValide(self, p_start, p_end, p_piece):
-        """
-        Vérifie si un mouvement est valide pour une dame.
+        """_summary_
+            Vérifie si un mouvement est valide pour une dame.
+        Args:
+            p_start (_type_): position depart pion
+            p_end (_type_): positon arrive pion
+            p_piece (_type_): piece
+
+        Returns:
+            _type_: boolean
         """
         if (p_piece.color != self.tourCourant + "Q"):
             return False
@@ -101,9 +130,16 @@ class Plateau:
         return False
     
     def PromotionReine(self,p_end,p_piece) :
-        """
-        Si un pion atteint la dernière ligne il est promu
-        """
+        """_summary_
+             Si un pion atteint la dernière ligne il est promu
+        Args:
+            p_end (_type_): position d'arrivée
+            p_piece (_type_): piece
+
+        Returns:
+            _type_:piece
+        """        
+
         if p_end[0] == 9 and p_piece.color == "W":
             p_piece.Promote()
             self.grille[p_end[0]][p_end[1]] = "WQ"
@@ -117,9 +153,17 @@ class Plateau:
         return p_piece
 
     def DeplacerPion(self, p_start, p_end, p_piece):
-        """
-        Déplace un pion de base.
-        """
+        """_summary_
+            Déplace un pion de base.
+        Args:
+            p_start (_type_): coord de depart pion
+            p_end (_type_): coord d'arrivée pion
+            p_piece (_type_): piece
+
+        Returns:
+            _type_: Bool, Piece, Piece, int, int
+        """        
+
         if not self.VerifieSiMouvementPionValide(p_start, p_end, p_piece):
             return False, False, p_piece, -1, -1
 
@@ -147,9 +191,16 @@ class Plateau:
 
     
     def DeplacerReine(self, p_start, p_end, p_piece):
-        """
-        Déplace une dame.
-        """
+        """_summary_
+            Déplace une dame.
+        Args:
+            p_start (_type_): position depart
+            p_end (_type_): position d'arrivée
+            p_piece (_type_): piece
+
+        Returns:
+            _type_: Bool, piece,piece, int, int
+        """        
         #Si invalide on annule
         if not self.VerifieSiMouvementReineValide(p_start, p_end, p_piece):
             return False, False, p_piece, -1, -1
