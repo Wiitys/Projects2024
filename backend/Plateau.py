@@ -6,7 +6,7 @@ class Plateau:
     #region CONSTRUCTEUR
     def __init__( self ):
         self.grille = []
-        self.tourCourant = "W"  # Définir le joueur actuel ( "W" pour blanc, "B" pour noir )
+        self.tourCourant = "W"  """ Définir le joueur actuel ( "W" pour blanc, "B" pour noir )"""
     #endregion
     
     #region METHODES
@@ -75,7 +75,7 @@ class Plateau:
         rowDiff = p_end[0] - p_start[0]
         colDiff = abs( p_end[1] - p_start[1] )
 
-        # Mouvement simple pour un pion
+        """ Mouvement simple pour un pion """
         if abs( rowDiff ) == 1 and colDiff == 1:
             if p_piece.color == "W" and rowDiff <= 0:
                 return False
@@ -83,7 +83,7 @@ class Plateau:
                 return False
             return True
 
-        # Capture pour un pion
+        """ Capture pour un pion """
         if abs( rowDiff ) == 2 and colDiff == 2:
             intermediate = self.ObtenirPositionIntermediaire( p_start, p_end )
             if self.grille[intermediate[0]][intermediate[1]] in ( "W", "B" ) and self.grille[intermediate[0]][intermediate[1]] != p_piece.color:
@@ -110,7 +110,7 @@ class Plateau:
         v_rowDiff = p_end[0] - p_start[0]
         v_colDiff = abs( p_end[1] - p_start[1] )
 
-        # Mouvement simple pour une reine
+        """ Mouvement simple pour une reine"""
         if abs( v_rowDiff ) == abs( v_colDiff ):
             v_stepRow = 1 if v_rowDiff > 0 else -1
             v_stepCol = 1 if p_end[1] > p_start[1] else -1
@@ -118,12 +118,13 @@ class Plateau:
             currentRow, currentCol = p_start[0] + v_stepRow, p_start[1] + v_stepCol
             foundPiece = False
 
-            # Capture
+            """ Capture"""
             while currentRow != p_end[0] and currentCol != p_end[1]:
                 if self.grille[currentRow][currentCol] in ( "W", "B", "WQ", "BQ" ):
-                    if found_piece:  # Une pièce a déjà été rencontrée
+                    """ Une pièce a déjà été rencontrée"""
+                    if found_piece: 
                         return False
-                    found_piece = True  # Première pièce rencontrée
+                    found_piece = True  
                 currentRow += v_stepRow
                 currentCol += v_stepCol
 
@@ -173,7 +174,7 @@ class Plateau:
         v_pieceCapture = False
         v_pieceCaptureX, v_pieceCaptureY = -1, -1
 
-        #Si deplacement de 2 cases : On va chercher le pion intermédiaire
+        """ Si deplacement de 2 cases : On va chercher le pion intermédiaire """
         if abs( p_start[0] - p_end[0] ) == 2:
             intermediate = self.ObtenirPositionIntermediaire( p_start, p_end )
             if self.grille[intermediate[0]][intermediate[1]] in ( "W", "B" ):
@@ -181,7 +182,7 @@ class Plateau:
                 v_pieceCapture = True
                 v_pieceCaptureX, v_pieceCaptureY = intermediate
 
-        #On place le pion à ses nouvelles coordonées sur la grille ( plateau )
+        """ On place le pion à ses nouvelles coordonées sur la grille ( plateau ) """
         self.grille[p_start[0]][p_start[1]] = 0
         self.grille[p_end[0]][p_end[1]] = p_piece.color
         p_piece.x, p_piece.y = p_end[0], p_end[1]
@@ -201,7 +202,7 @@ class Plateau:
         Returns:
             _type_: Bool, piece,piece, int, int
         """        
-        #Si invalide on annule
+        """ Si invalide on annule """
         if not self.VerifieSiMouvementReineValide( p_start, p_end, p_piece ):
             return False, False, p_piece, -1, -1
 
@@ -213,7 +214,7 @@ class Plateau:
         v_stepCol = 1 if p_end[1] > p_start[1] else -1
         currentRow, currentCol = p_start[0] + v_stepRow, p_start[1] + v_stepCol
 
-        #La reine peut se déplacer tout en diagonale
+        """ La reine peut se déplacer tout en diagonale """
         while currentRow != p_end[0] and currentCol != p_end[1]:
             if self.grille[currentRow][currentCol] in ( "W", "B", "WQ", "BQ" ):
                 self.grille[currentRow][currentCol] = 0
@@ -223,7 +224,7 @@ class Plateau:
             currentRow += v_stepRow
             currentCol += v_stepCol
         
-        #On ajoute la reine à à sa nouvelle place sur la grille
+        """ On ajoute la reine à à sa nouvelle place sur la grille """
         self.grille[p_start[0]][p_start[1]] = 0
         self.grille[p_end[0]][p_end[1]] = p_piece.color
         p_piece.x,p_piece.y = p_end[0], p_end[1]
@@ -295,7 +296,7 @@ class Plateau:
         rowDiff = p_end[0] - p_start[0]
         colDiff = abs( p_end[1] - p_start[1] )
 
-        # Mouvement simple pour un pion
+        """ Mouvement simple pour un pion """
         if abs( rowDiff ) == 1 and colDiff == 1:
             if p_piece.color == "W" and rowDiff <= 0:
                 return False
@@ -303,7 +304,7 @@ class Plateau:
                 return False
             return True
 
-        # Capture pour un pion
+        """ Capture pour un pion """
         if abs( rowDiff ) == 2 and colDiff == 2:
             intermediate = self.ObtenirPositionIntermediaire( p_start, p_end )
             if self.grille[intermediate[0]][intermediate[1]] in ( "W", "B" ) and self.grille[intermediate[0]][intermediate[1]] != p_piece.color:
@@ -330,7 +331,7 @@ class Plateau:
         v_rowDiff = p_end[0] - p_start[0]
         v_colDiff = abs( p_end[1] - p_start[1] )
 
-        # Mouvement simple pour une reine
+        """ Mouvement simple pour une reine """
         if abs( v_rowDiff ) == abs( v_colDiff ):
             v_stepRow = 1 if v_rowDiff > 0 else -1
             v_stepCol = 1 if p_end[1] > p_start[1] else -1
@@ -338,12 +339,14 @@ class Plateau:
             currentRow, currentCol = p_start[0] + v_stepRow, p_start[1] + v_stepCol
             foundPiece = False
 
-            # Capture
+            """Capture """
             while currentRow != p_end[0] and currentCol != p_end[1]:
                 if self.grille[currentRow][currentCol] in ( "W", "B", "WQ", "BQ" ):
-                    if found_piece:  # Une pièce a déjà été rencontrée
+                    """ Une pièce a déjà été rencontrée """
+                    if found_piece:  
                         return False
-                    found_piece = True  # Première pièce rencontrée
+                    """ Première pièce rencontrée """
+                    found_piece = True  
                 currentRow += v_stepRow
                 currentCol += v_stepCol
 
@@ -393,7 +396,7 @@ class Plateau:
         v_pieceCapture = False
         v_pieceCaptureX, v_pieceCaptureY = -1, -1
 
-        #Si deplacement de 2 cases : On va chercher le pion intermédiaire
+        """Si deplacement de 2 cases : On va chercher le pion intermédiaire"""
         if abs( p_start[0] - p_end[0] ) == 2:
             intermediate = self.ObtenirPositionIntermediaire( p_start, p_end )
             if self.grille[intermediate[0]][intermediate[1]] in ( "W", "B" ):
@@ -401,7 +404,7 @@ class Plateau:
                 v_pieceCapture = True
                 v_pieceCaptureX, v_pieceCaptureY = intermediate
 
-        #On place le pion à ses nouvelles coordonées sur la grille ( plateau )
+        """On place le pion à ses nouvelles coordonées sur la grille ( plateau )"""
         self.grille[p_start[0]][p_start[1]] = 0
         self.grille[p_end[0]][p_end[1]] = p_piece.color
         p_piece.x, p_piece.y = p_end[0], p_end[1]
@@ -421,7 +424,7 @@ class Plateau:
         Returns:
             _type_: Bool, piece,piece, int, int
         """        
-        #Si invalide on annule
+        """Si invalide on annule"""
         if not self.VerifieSiMouvementReineValide( p_start, p_end, p_piece ):
             return False, False, p_piece, -1, -1
 
@@ -433,7 +436,7 @@ class Plateau:
         v_stepCol = 1 if p_end[1] > p_start[1] else -1
         currentRow, currentCol = p_start[0] + v_stepRow, p_start[1] + v_stepCol
 
-        #La reine peut se déplacer tout en diagonale
+        """La reine peut se déplacer tout en diagonale"""
         while currentRow != p_end[0] and currentCol != p_end[1]:
             if self.grille[currentRow][currentCol] in ( "W", "B", "WQ", "BQ" ):
                 self.grille[currentRow][currentCol] = 0
@@ -443,7 +446,7 @@ class Plateau:
             currentRow += v_stepRow
             currentCol += v_stepCol
         
-        #On ajoute la reine à à sa nouvelle place sur la grille
+        """On ajoute la reine à à sa nouvelle place sur la grille"""
         self.grille[p_start[0]][p_start[1]] = 0
         self.grille[p_end[0]][p_end[1]] = p_piece.color
         p_piece.x,p_piece.y = p_end[0], p_end[1]
