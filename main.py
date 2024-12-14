@@ -11,12 +11,12 @@ from backend.Plateau import Plateau
 from frontend.Interface import InterfaceJeuDeDames
 
 # Initialisation du plateau avec des pions
-plateau = Plateau(  )
-plateau.InitialiserPlateau(  )
+plateau = Plateau()
+plateau.InitialiserPlateau()
 
 # Création de la fenêtre principale
-fenetre = ctk.CTk(  )
+fenetre = ctk.CTk()
 app = InterfaceJeuDeDames( fenetre, plateau )
 
 # Lancer l'application
-fenetre.mainloop(  )
+fenetre.mainloop()

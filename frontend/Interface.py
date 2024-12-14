@@ -29,10 +29,10 @@ class InterfaceJeuDeDames:
         self.titre = ctk.CTkLabel( p_fenetre, text="Jeu de Dames", font=("Helvetica", 30, "bold" ), text_color="#FFD700")
         self.titre.pack( pady=20 )
 
-        self.GestionCanvas(  )
+        self.GestionCanvas()
        
         # Affichage du plateau de jeu avec des cases et des pions
-        self.AfficherPlateau(  )
+        self.AfficherPlateau()
 
         # Création du bouton "JOUER"
         self.bouton_jouer = ctk.CTkButton(
@@ -109,7 +109,7 @@ class InterfaceJeuDeDames:
         popup.geometry( "300x150" )
         popup.configure( bg="#333333" )
         popup.transient( self.fenetre )
-        popup.grab_set(  )
+        popup.grab_set()
 
         label_message = tk.Label(
             popup,
@@ -123,7 +123,7 @@ class InterfaceJeuDeDames:
         p_boutonValider = ctk.CTkButton(
             popup,
             text="OK",
-            command=lambda: [popup.destroy(  ), self.ReinitialiserJeu(  )],
+            command=lambda: [popup.destroy(), self.ReinitialiserJeu()],
             font=( "Helvetica", 14 ),
             fg_color="#FF5733",
             hover_color="#C70039"
@@ -133,7 +133,7 @@ class InterfaceJeuDeDames:
     def ReinitialiserJeu( self ):
         """Réinitialise le jeu à son état initial."""
         # Réinitialise le plateau
-        self.Plateau.InitialiserPlateau(  )
+        self.Plateau.InitialiserPlateau()
 
         # Réinitialise les variables internes
         self.Plateau.tourCourant = 'W'
@@ -141,10 +141,10 @@ class InterfaceJeuDeDames:
 
         # Réinitialise l'affichage
         self.canvas.delete( "all" )  # Efface tout sur le canevas
-        self.AfficherPlateau(  )  # Redessine le plateau
-        self.AfficherPieces(  )
-        self.MajPionsRestants(  )
-        self.MajTour(  )
+        self.AfficherPlateau()  # Redessine le plateau
+        self.AfficherPieces()
+        self.MajPionsRestants()
+        self.MajTour()
 
         # Réaffiche le bouton "JOUER" pour permettre de relancer la partie
         self.bouton_jouer.pack( pady=40 )
@@ -172,7 +172,7 @@ class InterfaceJeuDeDames:
         """Réaffiche la nouvelle position des pions en fonction de leurs nouvelles coordonnées ( si elles ont changées )."""
         v_tailleCase = 60
         #On parcourt tous les pions de la grille et on change les pions sur le canva si nécessaire
-        for pion in self.pions.items(  ) :
+        for pion in self.pions.items() :
         
             if pion[1].isAlive:
                 couleur = self.ColoriserPion( pion[1].color )
@@ -185,7 +185,7 @@ class InterfaceJeuDeDames:
             else :
                 self.canvas.delete( pion[0] )
 
-        self.MajPionsRestants(  )
+        self.MajPionsRestants()
 
 
     def ChangementCouleur( self, pion ):
@@ -224,7 +224,7 @@ class InterfaceJeuDeDames:
                     self.canvas.tag_bind( pionId, "<ButtonRelease-1>", self.Drop )
 
         # Mettre à jour les pions restants après affichage initial
-        self.MajPionsRestants(  )
+        self.MajPionsRestants()
 
     def startDrag( self, p_event ):
         """_summary_
@@ -282,8 +282,8 @@ class InterfaceJeuDeDames:
                     self.Plateau.tourCourant = 'W' if self.Plateau.tourCourant == 'B' else 'B'
 
                 # Mettre à jour le tour du joueur
-                self.ReafficherPieces(  )
-                self.MajTour(  )
+                self.ReafficherPieces()
+                self.MajTour()
 
             else:
                 if self.pions[self.pionSelectionne].color != self.Plateau.tourCourant or self.pions[self.pionSelectionne].color != self.Plateau.tourCourant + "Q":
@@ -311,7 +311,7 @@ class InterfaceJeuDeDames:
             v_pieceMangeeY ( _type_ ): coordonées Y de la piece capturée
         """        
 
-        for pionId, pion in self.pions.items(  ):
+        for pionId, pion in self.pions.items():
             if pion.x == v_pieceMangeeX and pion.y == v_pieceMangeeY:
                 pion.isAlive = False
                 print( f"Pion {pionId} a été mangé" )
@@ -327,8 +327,8 @@ class InterfaceJeuDeDames:
     def LancerJeu( self ):
         """Action pour démarrer le jeu."""
         print( "Le jeu commence !" )
-        self.AfficherPieces(  )
-        self.bouton_jouer.pack_forget(  )
+        self.AfficherPieces()
+        self.bouton_jouer.pack_forget()
 
 
     #endregion
