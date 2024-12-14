@@ -13,20 +13,52 @@ ctk.set_default_color_theme("blue")
 
 
 class InterfaceJeuDeDames:
-    def __init__(self, fenetre, Plateau):
-        self.fenetre = fenetre
-        self.Plateau = Plateau
+    """ Classe qui gère l'interface de jeu et intéragit avec les éléments (Plateau et Pièce)"""
+
+    def __init__(self, p_fenetre, p_plateau):
+        self.fenetre = p_fenetre
+        self.Plateau = p_plateau
         self.fenetre.title("Jeu de Dames")
         self.fenetre.geometry("650x750")
         self.Plateau.tourCourant = 'W'
         self.pions ={}
-        self.partie_terminee = False
+        self.partieTerminee = False
 
         # Titre principal
-        self.titre = ctk.CTkLabel(fenetre, text="Jeu de Dames", font=("Helvetica", 30, "bold"), text_color="#FFD700")
+        self.titre = ctk.CTkLabel(p_fenetre, text="Jeu de Dames", font=("Helvetica", 30, "bold"), text_color="#FFD700")
         self.titre.pack(pady=20)
 
-        # Configuration du canvas pour le plateau 10x10
+        self.GestionCanvas()
+       
+        # Affichage du plateau de jeu avec des cases et des pions
+        self.AfficherPlateau()
+
+        # Création du bouton "JOUER"
+        self.bouton_jouer = ctk.CTkButton(
+            p_fenetre, text="JOUER", font=("Helvetica", 20), width=200,
+            height=50, corner_radius=20, fg_color="#FF5733",
+            hover_color="#C70039", text_color="#FFFFFF", command=self.LancerJeu
+        )
+        self.bouton_jouer.pack(pady=40)
+
+        # Variables pour le Drag and Drop
+        self.pionSelectionne = None
+        self.positionInitiale = None
+
+        # Affichage du tour du joueur
+        self.tour_label = ctk.CTkLabel(p_fenetre, text="Au tour de : Blanc", font=("Helvetica", 20), text_color="#FFD700")
+        self.tour_label.pack(pady=20)
+
+
+        # Affichage du nombre de pions restants
+        self.pionsRestantEtiquette = ctk.CTkLabel(
+            p_fenetre, text="Pions restants - Blanc: 20 | Noir: 20",
+            font=("Helvetica", 18), text_color="#FFFFFF"
+        )
+        self.pionsRestantEtiquette.pack(pady=10)
+
+    def GestionCanvas(self):
+        """S'occupe de la configuration du canvas"""
         self.canvas_frame = ctk.CTkFrame(self.fenetre, width=600, height=600, corner_radius=15, fg_color="#333333")
         self.canvas_frame.pack(pady=10)
 
@@ -34,60 +66,35 @@ class InterfaceJeuDeDames:
         self.canvas = tk.Canvas(self.canvas_frame, width=600, height=600, bg="#444444", bd=0, highlightthickness=0)
         self.canvas.pack(padx=10, pady=10)
 
-        # Affichage du plateau de jeu avec des cases et des pions
-        self.afficher_plateau()
-
-        # Création du bouton "JOUER"
-        self.bouton_jouer = ctk.CTkButton(
-            fenetre, text="JOUER", font=("Helvetica", 20), width=200,
-            height=50, corner_radius=20, fg_color="#FF5733",
-            hover_color="#C70039", text_color="#FFFFFF", command=self.lancer_jeu
-        )
-        self.bouton_jouer.pack(pady=40)
-
-        # Variables pour le drag and drop
-        self.pion_selectionne = None
-        self.position_initiale = None
-
-        # Affichage du tour du joueur
-        self.tour_label = ctk.CTkLabel(fenetre, text="Au tour de : Blanc", font=("Helvetica", 20), text_color="#FFD700")
-        self.tour_label.pack(pady=20)
-
-
-        # Affichage du nombre de pions restants
-        self.pions_restants_label = ctk.CTkLabel(
-            fenetre, text="Pions restants - Blanc: 20 | Noir: 20",
-            font=("Helvetica", 18), text_color="#FFFFFF"
-        )
-        self.pions_restants_label.pack(pady=10)
-
-    def afficher_plateau(self):
+    def AfficherPlateau(self):
         """Affiche le plateau de jeu en dessinant les cases pour une grille 10x10."""
-        taille_case = 60
-        for i in range(10):
-            for j in range(10):
-                x1, y1 = i * taille_case, j * taille_case
-                x2, y2 = x1 + taille_case, y1 + taille_case
-                couleur = "#FFFFFF" if (i + j) % 2 == 0 else "#333333"
+        v_taille_case = 60 
+
+        #Parcourt la grille et y créee les cases sur le canva
+        for v_ligne in range(10):
+            for v_colonne in range(10):
+                x1, y1 = v_ligne * v_taille_case, v_colonne * v_taille_case
+                x2, y2 = x1 + v_taille_case, y1 + v_taille_case
+                couleur = "#FFFFFF" if (v_ligne + v_colonne) % 2 == 0 else "#333333"
                 self.canvas.create_rectangle(x1, y1, x2, y2, fill=couleur, outline="")
 
-    def mettre_a_jour_pions_restants(self):
-        """Met à jour l'affichage du nombre de pions restants pour chaque joueur et vérifie si un joueur a gagné."""
-        nombre_blancs = sum(1 for i in range(10) for j in range(10) if self.Plateau.grille[i][j] == "W")
-        print(nombre_blancs)
-        nombre_noirs = sum(1 for i in range(10) for j in range(10) if self.Plateau.grille[i][j] == "B")
-        print(nombre_noirs)
-        self.pions_restants_label.configure(text=f"Pions restants - Blanc: {nombre_blancs} | Noir: {nombre_noirs}")
+    def MajPionsRestants(self):
+        """
+        Met à jour l'affichage du nombre de pions restants pour chaque joueur et vérifie si un joueur a gagné.
+        """
+        v_NombrePionsBlancs = sum(1 for i in range(10) for j in range(10) if self.Plateau.grille[i][j] == "W")
+        v_NombrePionsNoirs = sum(1 for i in range(10) for j in range(10) if self.Plateau.grille[i][j] == "B")
+        self.pionsRestantEtiquette.configure(text=f"Pions restants - Blanc: {v_NombrePionsBlancs} | Noir: {v_NombrePionsNoirs}")
 
         # Vérification de la condition de victoire, seulement si la partie n'est pas terminée
-        if not self.partie_terminee and (nombre_blancs == 0 or nombre_noirs == 0):
-            self.partie_terminee = True  # Marquer la partie comme terminée
-            gagnant = "Noir" if nombre_noirs > 0 else "Rouge"
-            couleur_popup = "#000000" if gagnant == "Noir" else "#FF0000"
-            self.afficher_popup_victoire(gagnant, couleur_popup)
+        if not self.partieTerminee and (v_NombrePionsBlancs == 0 or v_NombrePionsNoirs == 0):
+            self.partieTerminee = True  # Marquer la partie comme terminée
+            gagnant = "Noir" if v_NombrePionsNoirs > 0 else "Rouge"
+            v_couleurPopUp = "#000000" if gagnant == "Noir" else "#FF0000"
+            self.AfficherPopUpVictoire(gagnant, v_couleurPopUp)
 
 
-    def afficher_popup_victoire(self, gagnant, couleur_popup):
+    def AfficherPopUpVictoire(self, p_gagnant, p_couleurPopUp):
         """Affiche un popup annonçant le gagnant et réinitialise le jeu à la fermeture."""
         popup = tk.Toplevel(self.fenetre)
         popup.title("Partie terminée")
@@ -98,72 +105,77 @@ class InterfaceJeuDeDames:
 
         label_message = tk.Label(
             popup,
-            text=f"Le joueur {gagnant} a gagné !",
+            text=f"Le joueur {p_gagnant} a gagné !",
             font=("Helvetica", 16, "bold"),
-            fg=couleur_popup,
+            fg=p_couleurPopUp,
             bg="#333333"
         )
         label_message.pack(pady=30)
 
-        bouton_ok = ctk.CTkButton(
+        p_boutonValider = ctk.CTkButton(
             popup,
             text="OK",
-            command=lambda: [popup.destroy(), self.reinitialiser_jeu()],
+            command=lambda: [popup.destroy(), self.ReinitialiserJeu()],
             font=("Helvetica", 14),
             fg_color="#FF5733",
             hover_color="#C70039"
         )
-        bouton_ok.pack(pady=10)
+        p_boutonValider.pack(pady=10)
 
-    def reinitialiser_jeu(self):
+    def ReinitialiserJeu(self):
         """Réinitialise le jeu à son état initial."""
         # Réinitialise le plateau
         self.Plateau.InitialiserPlateau()
 
         # Réinitialise les variables internes
         self.Plateau.tourCourant = 'W'
-        self.partie_terminee = False
+        self.partieTerminee = False
 
         # Réinitialise l'affichage
         self.canvas.delete("all")  # Efface tout sur le canevas
-        self.afficher_plateau()  # Redessine le plateau
-        self.afficher_pieces()
-        self.mettre_a_jour_pions_restants()
-        self.mettre_a_jour_tour()
+        self.AfficherPlateau()  # Redessine le plateau
+        self.AfficherPieces()
+        self.MajPionsRestants()
+        self.MajTour()
 
         # Réaffiche le bouton "JOUER" pour permettre de relancer la partie
         self.bouton_jouer.pack(pady=40)
 
-    def color_pion(self,color):
-        if color == "B":
-            color = "#000000"
-        elif color == "W":
-            color = "#FFFFFF"
-        elif color == "BQ":
-            color= "#393939"
-        elif color == "WQ":
-            color = "#e3e3e3"
-        return color
+    def ColoriserPion(self,p_color):
+        """
+        Méthode qui colorise le pion en fonction de son role (Blanc, noir et dorés pour reines)
+        """
+        if p_color == "B":
+            p_color = "#000000"
+        elif p_color == "W":
+            p_color = "#FFFFFF"
+        elif p_color == "BQ":
+            p_color= "#393939"
+        elif p_color == "WQ":
+            p_color = "#e3e3e3"
+        return p_color
 
-    def afficher_pieces_autre_fois(self):
+    def ReafficherPieces(self):
         """Réaffiche la nouvelle position des pions en fonction de leurs nouvelles coordonnées (si elles ont changées)."""
-        taille_case = 60
+        v_tailleCase = 60
+        #On parcourt tous les pions de la grille et on change les pions sur le canva si nécessaire
         for pion in self.pions.items() :
-            if pion[1].is_alive:
-                couleur = self.color_pion(pion[1].color)
+        
+            if pion[1].isAlive:
+                couleur = self.ColoriserPion(pion[1].color)
                 # Coordonnées de l'ovale
-                x1, y1 = pion[1].y * taille_case + 10, pion[1].x * taille_case + 10
-                x2, y2 = (pion[1].y + 1) * taille_case - 10, (pion[1].x + 1) * taille_case - 10
+                x1, y1 = pion[1].y * v_tailleCase + 10, pion[1].x * v_tailleCase + 10
+                x2, y2 = (pion[1].y + 1) * v_tailleCase - 10, (pion[1].x + 1) * v_tailleCase - 10
                 # Bouger le pion avec ses nouvelles coordonnées
                 self.canvas.coords(pion[0], x1, y1,x2, y2)
-                self.changement_couleur(pion)
-
+                self.ChangementCouleur(pion)
             else :
                 self.canvas.delete(pion[0])
-        self.mettre_a_jour_pions_restants()
+
+        self.MajPionsRestants()
 
 
-    def changement_couleur(self, pion):
+    def ChangementCouleur(self, pion):
         """Change la couleur quand une dame passe reine"""
         # On change la couleur du pion si c'est une reine
         if pion[1].color == "WQ":
@@ -172,115 +184,111 @@ class InterfaceJeuDeDames:
             self.canvas.itemconfigure(pion[0], fill="#B8860B")  # Changer la couleur en gris
 
 
-    def afficher_pieces(self):
+    def AfficherPieces(self):
         """Affiche les pions noirs et blancs selon les positions du Plateau pour une grille 10x10."""
-        taille_case = 60
+        v_tailleCase = 60
 
-        for i in range(10):
-            for j in range(10):
-                piece = Piece(self.Plateau.grille[i][j],False,i,j)
+        #Parcourt de toute la tableau
+        for v_ligne in range(10):
+            for v_colonne in range(10):
+                piece = Piece(self.Plateau.grille[v_ligne][v_colonne],False,v_ligne,v_colonne)
 
-                code_hexa_pion = self.color_pion(self.Plateau.grille[i][j])
+                v_code_hexa_pion = self.ColoriserPion(self.Plateau.grille[v_ligne][v_colonne])
+                
+                #On dessine les pions et les lies aux événements 
+                if v_code_hexa_pion:
+                    x1, y1 = v_colonne * v_tailleCase + 10, v_ligne * v_tailleCase + 10
+                    x2, y2 = (v_colonne + 1) * v_tailleCase - 10, (v_ligne + 1) * v_tailleCase - 10
+                    pionId = self.canvas.create_oval(x1, y1, x2, y2, fill=v_code_hexa_pion, outline="black", width="3")
+                    self.pions[pionId] = piece
+                    self.canvas.tag_bind(pionId, "<ButtonPress-1>", self.startDrag)
+                    self.canvas.tag_bind(pionId, "<B1-Motion>", self.Drag)
+                    self.canvas.tag_bind(pionId, "<ButtonRelease-1>", self.Drop)
 
-                if code_hexa_pion:
-                    x1, y1 = j * taille_case + 10, i * taille_case + 10
-                    x2, y2 = (j + 1) * taille_case - 10, (i + 1) * taille_case - 10
-                    pion_id = self.canvas.create_oval(x1, y1, x2, y2, fill=code_hexa_pion, outline="black", width="3")
-                    self.pions[pion_id] = piece
-                    self.canvas.tag_bind(pion_id, "<ButtonPress-1>", self.start_drag)
-                    self.canvas.tag_bind(pion_id, "<B1-Motion>", self.drag)
-                    self.canvas.tag_bind(pion_id, "<ButtonRelease-1>", self.drop)
-                # Mettre à jour les pions restants après affichage initial
-        self.mettre_a_jour_pions_restants()
+        # Mettre à jour les pions restants après affichage initial
+        self.MajPionsRestants()
 
-    def start_drag(self, event):
-        """Démarre le drag d'un pion."""
+    def startDrag(self, p_event):
+        """Démarre le Drag d'un pion."""
         # Enregistre l'ID du pion sélectionné et la position initiale
-        self.pion_selectionne = event.widget.find_withtag("current")[0]
-        print("pion selectionne  = " , self.pion_selectionne)
-        self.position_initiale = (event.y // 60, event.x // 60)
+        self.pionSelectionne = p_event.widget.find_withtag("current")[0]
+        self.positionInitiale = (p_event.y // 60, p_event.x // 60)
 
 
-    def drag(self, event):
+    def Drag(self, p_event):
         """Déplace le pion sélectionné avec la souris."""
-        if self.pion_selectionne :
+        if self.pionSelectionne :
             # Calcule les nouvelles coordonnées du pion
-            x, y = event.x, event.y
-            self.canvas.coords(self.pion_selectionne, x - 25, y - 25, x + 25, y + 25)
+            x, y = p_event.x, p_event.y
+            self.canvas.coords(self.pionSelectionne, x - 25, y - 25, x + 25, y + 25)
 
-    def drop(self, event):
+    def Drop(self, p_event):
         """Dépose le pion et tente de le déplacer sur le plateau."""
-        if self.pion_selectionne and self.position_initiale:
+        if self.pionSelectionne and self.positionInitiale:
             # Position finale du pion
-            position_finale = (event.y // 60, event.x // 60)
-            print("pion select", self.pion_selectionne)
+            v_positionFinale = (p_event.y // 60, p_event.x // 60)
 
             # Appelle `move_piece` pour mettre à jour la logique du plateau
-            mouvement_valide, piece_mangee,piece, piece_mangee_x, piece_mangee_y = self.Plateau.GestionnaireDeMouvementPiece(
-                self.position_initiale, position_finale, self.pions[self.pion_selectionne]
+            v_mouvementValide, v_pieceMangee,piece, v_pieceMangeeX, v_pieceMangeeY = self.Plateau.GestionnaireDeMouvementPiece(
+                self.positionInitiale, v_positionFinale, self.pions[self.pionSelectionne]
             )
 
-            if piece_mangee_x != -1 and piece_mangee_y !=-1 :
-                self.maj_pion_apres_mange(piece_mangee_x,piece_mangee_y)
+            if v_pieceMangeeX != -1 and v_pieceMangeeY !=-1 :
+                self.MajPionApresCapture(v_pieceMangeeX,v_pieceMangeeY)
 
-            if mouvement_valide:
-                print(f"Pion déplacé de {self.position_initiale} à {position_finale}")
-                print("pion selectionné x y = ", self.pions[self.pion_selectionne].x, self.pions[self.pion_selectionne].y)
-
-                if piece_mangee:
-                    print(f"Une pièce a été mangée en se déplaçant de {self.position_initiale} à {position_finale}")
+            if v_mouvementValide:
+                if v_pieceMangee:
+                    print(f"Une pièce a été mangée en se déplaçant de {self.positionInitiale} à {v_positionFinale}")
 
                 # Met à jour la position sur le canevas pour la position finale
-                x1, y1 = position_finale[1] * 60 + 10, position_finale[0] * 60 + 10
+                x1, y1 = v_positionFinale[1] * 60 + 10, v_positionFinale[0] * 60 + 10
                 x2, y2 = x1 + 40, y1 + 40
-                self.canvas.coords(self.pion_selectionne, x1, y1, x2, y2)
+                self.canvas.coords(self.pionSelectionne, x1, y1, x2, y2)
 
                 # Alterne le tour des joueurs si aucun mouvement supplémentaire n'est possible
-                if not piece_mangee:  # Passe le tour seulement si aucune capture supplémentaire n'est possible
+                if not v_pieceMangee:  # Passe le tour seulement si aucune capture supplémentaire n'est possible
                     self.Plateau.tourCourant = 'W' if self.Plateau.tourCourant == 'B' else 'B'
 
                 # Mettre à jour le tour du joueur
-                self.afficher_pieces_autre_fois()
-                self.mettre_a_jour_tour()
-                print(self.Plateau.grille)
+                self.ReafficherPieces()
+                self.MajTour()
 
             else:
-                print("couleur du pion, couleur du pion qui doit jouer, couleur du pion qui doit jouer+Q" ,self.pions[self.pion_selectionne].color, self.Plateau.tourCourant, self.Plateau.tourCourant + "Q")
-                if self.pions[self.pion_selectionne].color != self.Plateau.tourCourant or self.pions[self.pion_selectionne].color != self.Plateau.tourCourant + "Q":
+                if self.pions[self.pionSelectionne].color != self.Plateau.tourCourant or self.pions[self.pionSelectionne].color != self.Plateau.tourCourant + "Q":
                     print(
-                        f"Déplacement invalide de {self.position_initiale} à {position_finale}, ce n'est pas votre tour")
+                        f"Déplacement invalide de {self.positionInitiale} à {v_positionFinale}, ce n'est pas votre tour")
                 else:
-                    print(f"Déplacement invalide de {self.position_initiale} à {position_finale}")
+                    print(f"Déplacement invalide de {self.positionInitiale} à {v_positionFinale}")
 
                 # Retour à la position initiale si mouvement invalide
-                x1, y1 = self.position_initiale[1] * 60 + 10, self.position_initiale[0] * 60 + 10
+                x1, y1 = self.positionInitiale[1] * 60 + 10, self.positionInitiale[0] * 60 + 10
                 x2, y2 = x1 + 40, y1 + 40
-                self.canvas.coords(self.pion_selectionne, x1, y1, x2, y2)
+                self.canvas.coords(self.pionSelectionne, x1, y1, x2, y2)
 
             # Réinitialise les variables
-            self.pion_selectionne = None
-            self.position_initiale = None
+            self.pionSelectionne = None
+            self.positionInitiale = None
 
 
 
-    def maj_pion_apres_mange(self, piece_mangee_x, piece_mangee_y):
-        """Change l'attribut is_alive à false si le pion vient d'être mangé """
-        for pion_id, pion in self.pions.items():
-            if pion.x == piece_mangee_x and pion.y == piece_mangee_y:
-                pion.is_alive = False
-                print(f"Pion {pion_id} a été mangé")
+    def MajPionApresCapture(self, v_pieceMangeeX, v_pieceMangeeY):
+        """Change l'attribut isAlive à false si le pion vient d'être mangé """
+        for pionId, pion in self.pions.items():
+            if pion.x == v_pieceMangeeX and pion.y == v_pieceMangeeY:
+                pion.isAlive = False
+                print(f"Pion {pionId} a été mangé")
 
 
-    def mettre_a_jour_tour(self):
+    def MajTour(self):
         """Met à jour le texte affichant le tour du joueur."""
         if self.Plateau.tourCourant == "B":
             self.tour_label.configure(text="Au tour de : Noir")
         else:
             self.tour_label.configure(text="Au tour de : Blanc")
 
-    def lancer_jeu(self):
+    def LancerJeu(self):
         """Action pour démarrer le jeu."""
         print("Le jeu commence !")
-        self.afficher_pieces()
+        self.AfficherPieces()
         self.bouton_jouer.pack_forget()
 

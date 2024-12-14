@@ -105,12 +105,12 @@ class Plateau:
         Si un pion atteint la dernière ligne il est promu
         """
         if p_end[0] == 9 and p_piece.color == "W":
-            p_piece.promote()
+            p_piece.Promote()
             self.grille[p_end[0]][p_end[1]] = "WQ"
             p_piece.color = "WQ"
             
         if p_end[0] == 0 and p_piece.color == "B":
-            p_piece.promote()
+            p_piece.Promote()
             self.grille[p_end[0]][p_end[1]] = "BQ"
             p_piece.color = "BQ"
 
