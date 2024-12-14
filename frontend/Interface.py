@@ -14,7 +14,8 @@ ctk.set_default_color_theme("blue")
 
 class InterfaceJeuDeDames:
     """ Classe qui gère l'interface de jeu et intéragit avec les éléments (Plateau et Pièce)"""
-
+  
+    #region CONSTRUCTEUR
     def __init__(self, p_fenetre, p_plateau):
         self.fenetre = p_fenetre
         self.Plateau = p_plateau
@@ -56,7 +57,9 @@ class InterfaceJeuDeDames:
             font=("Helvetica", 18), text_color="#FFFFFF"
         )
         self.pionsRestantEtiquette.pack(pady=10)
-
+    #endregion
+    
+    #region METHODES
     def GestionCanvas(self):
         """S'occupe de la configuration du canvas"""
         self.canvas_frame = ctk.CTkFrame(self.fenetre, width=600, height=600, corner_radius=15, fg_color="#333333")
@@ -327,3 +330,6 @@ class InterfaceJeuDeDames:
         self.AfficherPieces()
         self.bouton_jouer.pack_forget()
 
+
+    #endregion
+    

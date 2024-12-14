@@ -14,7 +14,6 @@ from frontend.Interface import InterfaceJeuDeDames
 plateau = Plateau()
 plateau.InitialiserPlateau()
 
-
 # Création de la fenêtre principale
 fenetre = ctk.CTk()
 app = InterfaceJeuDeDames(fenetre, plateau)
