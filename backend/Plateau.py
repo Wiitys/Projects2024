@@ -343,10 +343,10 @@ class Plateau:
             while currentRow != p_end[0] and currentCol != p_end[1]:
                 if self.grille[currentRow][currentCol] in ( "W", "B", "WQ", "BQ" ):
                     """ Une pièce a déjà été rencontrée """
-                    if found_piece:  
+                    if foundPiece:  
                         return False
                     """ Première pièce rencontrée """
-                    found_piece = True  
+                    foundPiece = True  
                 currentRow += v_stepRow
                 currentCol += v_stepCol
 

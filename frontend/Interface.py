@@ -3,8 +3,8 @@ import customtkinter as ctk
 import sys
 import os
 
-from backend.Plateau import Plateau
-from backend.Piece import Piece
+from Backend.Plateau import Plateau
+from Backend.Piece import Piece
 
 
 # Configuration de base pour customtkinter
@@ -145,7 +145,7 @@ class InterfaceJeuDeDames:
         self.AfficherPieces()
         self.MajPionsRestants()
         self.MajTour()
-     self.bouton_jouer.pack( pady=40 )
+        self.bouton_jouer.pack( pady=40 )
 
     def ColoriserPion( self,p_color ):
         """_summary_
