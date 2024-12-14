@@ -95,7 +95,12 @@ class InterfaceJeuDeDames:
 
 
     def AfficherPopUpVictoire(self, p_gagnant, p_couleurPopUp):
-        """Affiche un popup annonçant le gagnant et réinitialise le jeu à la fermeture."""
+        """_summary_
+            Affiche un popup annonçant le gagnant et réinitialise le jeu à la fermeture.
+        Args:
+            p_gagnant (_type_): pseudo du joueur gagnant
+            p_couleurPopUp (_type_): couleur du popUp qui sera affiché
+        """       
         popup = tk.Toplevel(self.fenetre)
         popup.title("Partie terminée")
         popup.geometry("300x150")
@@ -142,8 +147,13 @@ class InterfaceJeuDeDames:
         self.bouton_jouer.pack(pady=40)
 
     def ColoriserPion(self,p_color):
-        """
-        Méthode qui colorise le pion en fonction de son role (Blanc, noir et dorés pour reines)
+        """_summary_
+            Méthode qui colorise le pion en fonction de son role (Blanc, noir et dorés pour reines)
+        Args:
+            p_color (_type_): Couleur du pion
+
+        Returns:
+            _type_: string
         """
         if p_color == "B":
             p_color = "#000000"
@@ -176,7 +186,12 @@ class InterfaceJeuDeDames:
 
 
     def ChangementCouleur(self, pion):
-        """Change la couleur quand une dame passe reine"""
+        """_summary_
+            Change la couleur quand une dame passe reine
+        Args:
+            pion (_type_): pion à analyser
+        """        
+    
         # On change la couleur du pion si c'est une reine
         if pion[1].color == "WQ":
             self.canvas.itemconfigure(pion[0], fill="#FFD700")  # Changer la couleur en jaune
@@ -209,21 +224,35 @@ class InterfaceJeuDeDames:
         self.MajPionsRestants()
 
     def startDrag(self, p_event):
-        """Démarre le Drag d'un pion."""
+        """_summary_
+            Démarre le Drag d'un pion.
+        Args:
+            p_event (_type_):Evénement déclenché
+        """        
+
         # Enregistre l'ID du pion sélectionné et la position initiale
         self.pionSelectionne = p_event.widget.find_withtag("current")[0]
         self.positionInitiale = (p_event.y // 60, p_event.x // 60)
 
 
     def Drag(self, p_event):
-        """Déplace le pion sélectionné avec la souris."""
+        """_summary_
+            Déplace le pion sélectionné avec la souris
+        Args:
+            p_event (_type_): événement déclenché
+        """        
+
         if self.pionSelectionne :
             # Calcule les nouvelles coordonnées du pion
             x, y = p_event.x, p_event.y
             self.canvas.coords(self.pionSelectionne, x - 25, y - 25, x + 25, y + 25)
 
     def Drop(self, p_event):
-        """Dépose le pion et tente de le déplacer sur le plateau."""
+        """_summary_
+            Lache le pion
+        Args:
+            p_event (_type_): événement déclenché
+        """     
         if self.pionSelectionne and self.positionInitiale:
             # Position finale du pion
             v_positionFinale = (p_event.y // 60, p_event.x // 60)
@@ -272,7 +301,13 @@ class InterfaceJeuDeDames:
 
 
     def MajPionApresCapture(self, v_pieceMangeeX, v_pieceMangeeY):
-        """Change l'attribut isAlive à false si le pion vient d'être mangé """
+        """_summary_
+            Change l'attribut isAlive à false si le pion vient d'être mangé
+        Args:
+            v_pieceMangeeX (_type_): coordonées X de la piece capturée
+            v_pieceMangeeY (_type_): coordonées Y de la piece capturée
+        """        
+
         for pionId, pion in self.pions.items():
             if pion.x == v_pieceMangeeX and pion.y == v_pieceMangeeY:
                 pion.isAlive = False
