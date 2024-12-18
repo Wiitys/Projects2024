@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0cf9f72a-1008-4143-88a2-0a37cd767918" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/Plateau.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/Plateau.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/Interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/Interface.py" afterDir="false" />
-    </list>
+    <list default="true" id="0cf9f72a-1008-4143-88a2-0a37cd767918" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -51,7 +47,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "dev",
-    "last_opened_file_path": "C:/Bureau/COURS 3EME ANNEE/SAE_S6",
+    "last_opened_file_path": "C:/Users/byaro/PycharmProjects/Projects2024",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
