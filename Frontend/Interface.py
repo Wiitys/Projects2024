@@ -71,13 +71,13 @@ class InterfaceJeuDeDames:
 
     def AfficherPlateau( self ):
         """Affiche le plateau de jeu en dessinant les cases pour une grille 10x10."""
-        v_taille_case = 60 
+        v_tailleCase = 60
 
         """Parcourt la grille et y créee les cases sur le canva"""
         for v_ligne in range( 10 ):
             for v_colonne in range( 10 ):
-                x1, y1 = v_ligne * v_taille_case, v_colonne * v_taille_case
-                x2, y2 = x1 + v_taille_case, y1 + v_taille_case
+                x1, y1 = v_ligne * v_tailleCase, v_colonne * v_tailleCase
+                x2, y2 = x1 + v_tailleCase, y1 + v_tailleCase
                 couleur = "#FFFFFF" if ( v_ligne + v_colonne ) % 2 == 0 else "#333333"
                 self.canvas.create_rectangle( x1, y1, x2, y2, fill=couleur, outline="" )
 
@@ -85,14 +85,14 @@ class InterfaceJeuDeDames:
         """
         Met à jour l'affichage du nombre de pions restants pour chaque joueur et vérifie si un joueur a gagné.
         """
-        v_NombrePionsBlancs = sum( 1 for i in range(10 ) for j in range( 10 ) if self.Plateau.grille[i][j] == "W")
-        v_NombrePionsNoirs = sum( 1 for i in range(10 ) for j in range( 10 ) if self.Plateau.grille[i][j] == "B")
-        self.pionsRestantEtiquette.configure( text=f"Pions restants - Blanc: {v_NombrePionsBlancs} | Noir: {v_NombrePionsNoirs}" )
+        v_nombrePionsBlancs = sum( 1 for i in range(10 ) for j in range( 10 ) if self.Plateau.grille[i][j] == "W")
+        v_nombrePionsNoirs = sum( 1 for i in range(10 ) for j in range( 10 ) if self.Plateau.grille[i][j] == "B")
+        self.pionsRestantEtiquette.configure( text=f"Pions restants - Blanc: {v_nombrePionsBlancs} | Noir: {v_nombrePionsNoirs}" )
 
         # Vérification de la condition de victoire, seulement si la partie n'est pas terminée
-        if not self.partieTerminee and ( v_NombrePionsBlancs == 0 or v_NombrePionsNoirs == 0 ):
+        if not self.partieTerminee and ( v_nombrePionsBlancs == 0 or v_nombrePionsNoirs == 0 ):
             self.partieTerminee = True  # Marquer la partie comme terminée
-            gagnant = "Noir" if v_NombrePionsNoirs > 0 else "Rouge"
+            gagnant = "Noir" if v_nombrePionsNoirs > 0 else "Rouge"
             v_couleurPopUp = "#000000" if gagnant == "Noir" else "#FF0000"
             self.AfficherPopUpVictoire( gagnant, v_couleurPopUp )
 

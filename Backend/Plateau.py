@@ -63,7 +63,6 @@ class Plateau:
             p_start ( _type_ ): position de départ du pion
             p_end ( _type_ ): position d'arrivée du pion
             p_piece ( _type_ ): Piece
-
         Returns:
             _type_: Boolean
         """
@@ -71,7 +70,6 @@ class Plateau:
             return False
         if self.grille[p_end[0]][p_end[1]] != 0 or self.grille[p_start[0]][p_start[1]] not in ( "W", "B" ):
             return False
-
         rowDiff = p_end[0] - p_start[0]
         colDiff = abs( p_end[1] - p_start[1] )
 
